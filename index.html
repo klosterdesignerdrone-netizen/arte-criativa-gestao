@@ -25,8 +25,8 @@
       display: none !important;
     }
 
-    /* LOGIN */
-    #loginScreen {
+    #loginScreen,
+    #resetScreen {
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -35,9 +35,9 @@
       background: linear-gradient(135deg, #0d1b36, #16294d);
     }
 
-    .login-box {
+    .box {
       width: 100%;
-      max-width: 420px;
+      max-width: 430px;
       background: white;
       padding: 35px;
       border-radius: 18px;
@@ -50,7 +50,7 @@
     }
 
     .logo-title h1 {
-      font-size: 29px;
+      font-size: 28px;
       color: #0d1b36;
     }
 
@@ -83,29 +83,45 @@
       border-color: #d4af37;
     }
 
-    .btn-login {
+    .btn {
       width: 100%;
       padding: 14px;
       border: none;
       border-radius: 9px;
-      background: #d4af37;
-      color: #0d1b36;
       font-weight: bold;
       font-size: 16px;
       cursor: pointer;
     }
 
-    .btn-login:hover {
-      opacity: .92;
+    .btn-primary {
+      background: #d4af37;
+      color: #0d1b36;
     }
 
-    #loginMessage {
-      margin-top: 15px;
-      text-align: center;
+    .btn-secondary {
+      margin-top: 10px;
+      background: #0d1b36;
+      color: white;
+    }
+
+    .link-button {
+      display: block;
+      margin: 15px auto 0;
+      border: none;
+      background: none;
+      color: #0d1b36;
+      text-decoration: underline;
+      cursor: pointer;
       font-size: 14px;
     }
 
-    /* SISTEMA */
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
     header {
       background: #0d1b36;
       color: white;
@@ -188,16 +204,6 @@
       font-size: 13px;
       padding: 30px;
     }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 18px;
-      }
-
-      header h1 {
-        font-size: 22px;
-      }
-    }
   </style>
 </head>
 
@@ -205,37 +211,69 @@
 
   <!-- LOGIN -->
   <section id="loginScreen">
-    <div class="login-box">
+    <div class="box">
       <div class="logo-title">
         <h1>Arte Criativa Estúdio</h1>
         <p>Gestão do Estúdio</p>
       </div>
 
       <div class="field">
-        <label for="email">E-mail</label>
+        <label for="loginEmail">E-mail</label>
+        <input type="email" id="loginEmail" placeholder="Seu e-mail">
+      </div>
+
+      <div class="field">
+        <label for="loginPassword">Senha</label>
+        <input type="password" id="loginPassword" placeholder="Sua senha">
+      </div>
+
+      <button class="btn btn-primary" id="loginButton">
+        Entrar
+      </button>
+
+      <button class="link-button" id="forgotButton">
+        Esqueci minha senha
+      </button>
+
+      <div class="message" id="loginMessage"></div>
+    </div>
+  </section>
+
+  <!-- RECUPERAÇÃO -->
+  <section id="resetScreen" class="hidden">
+    <div class="box">
+      <div class="logo-title">
+        <h1>Nova senha</h1>
+        <p>Arte Criativa Estúdio</p>
+      </div>
+
+      <div class="field">
+        <label for="newPassword">Nova senha</label>
         <input
-          type="email"
-          id="email"
-          placeholder="Digite seu e-mail"
-          autocomplete="username"
+          type="password"
+          id="newPassword"
+          placeholder="Digite a nova senha"
         >
       </div>
 
       <div class="field">
-        <label for="password">Senha</label>
+        <label for="confirmPassword">Confirmar senha</label>
         <input
           type="password"
-          id="password"
-          placeholder="Digite sua senha"
-          autocomplete="current-password"
+          id="confirmPassword"
+          placeholder="Digite novamente"
         >
       </div>
 
-      <button class="btn-login" id="loginButton">
-        Entrar
+      <button class="btn btn-primary" id="savePasswordButton">
+        Salvar nova senha
       </button>
 
-      <div id="loginMessage"></div>
+      <button class="link-button" id="backToLoginButton">
+        Voltar para o login
+      </button>
+
+      <div class="message" id="resetMessage"></div>
     </div>
   </section>
 
@@ -254,7 +292,6 @@
     </header>
 
     <main>
-
       <section class="welcome">
         <h2>Bem-vinda ao seu sistema 👋</h2>
         <p id="userEmail"></p>
@@ -287,7 +324,6 @@
         </div>
 
       </section>
-
     </main>
 
     <footer>
@@ -297,60 +333,85 @@
   </section>
 
   <script>
-    const SUPABASE_URL = "https://mcpeihbimzrvrsnrzxwi.supabase.co";
+    const SUPABASE_URL =
+      "https://mcpeihbimzrvrsnrzxwi.supabase.co";
 
     const SUPABASE_PUBLISHABLE_KEY =
       "sb_publishable_vGWok2ke7UNf6Pcd9vnxvA_RTPFU3PM";
 
+    const SITE_URL =
+      "https://arte-criativa-estudio-sistema.klosterdesignerdrone.workers.dev";
+
     const supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
+      SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth: {
+          flowType: "implicit",
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      }
     );
 
     const loginScreen = document.getElementById("loginScreen");
+    const resetScreen = document.getElementById("resetScreen");
     const appScreen = document.getElementById("appScreen");
+
     const loginButton = document.getElementById("loginButton");
+    const forgotButton = document.getElementById("forgotButton");
     const logoutButton = document.getElementById("logoutButton");
-    const loginMessage = document.getElementById("loginMessage");
-    const userEmail = document.getElementById("userEmail");
+
+    const savePasswordButton =
+      document.getElementById("savePasswordButton");
+
+    const backToLoginButton =
+      document.getElementById("backToLoginButton");
+
+    const loginMessage =
+      document.getElementById("loginMessage");
+
+    const resetMessage =
+      document.getElementById("resetMessage");
+
+    const userEmail =
+      document.getElementById("userEmail");
 
     function showLogin() {
       loginScreen.classList.remove("hidden");
+      resetScreen.classList.add("hidden");
+      appScreen.classList.add("hidden");
+    }
+
+    function showReset() {
+      loginScreen.classList.add("hidden");
+      resetScreen.classList.remove("hidden");
       appScreen.classList.add("hidden");
     }
 
     function showApp(user) {
       loginScreen.classList.add("hidden");
+      resetScreen.classList.add("hidden");
       appScreen.classList.remove("hidden");
 
       userEmail.textContent =
-        "Usuário conectado: " + (user.email || "");
-    }
-
-    async function checkSession() {
-      const { data, error } = await supabaseClient.auth.getSession();
-
-      if (error) {
-        console.error(error);
-        showLogin();
-        return;
-      }
-
-      if (data.session?.user) {
-        showApp(data.session.user);
-      } else {
-        showLogin();
-      }
+        "Usuário conectado: " + (user?.email || "");
     }
 
     loginButton.addEventListener("click", async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+      const email =
+        document.getElementById("loginEmail").value.trim();
+
+      const password =
+        document.getElementById("loginPassword").value;
 
       loginMessage.textContent = "";
 
       if (!email || !password) {
-        loginMessage.textContent = "Preencha e-mail e senha.";
+        loginMessage.textContent =
+          "Preencha o e-mail e a senha.";
+
         loginMessage.style.color = "#b00020";
         return;
       }
@@ -370,6 +431,7 @@
       if (error) {
         loginMessage.textContent =
           "Não foi possível entrar. Confira o e-mail e a senha.";
+
         loginMessage.style.color = "#b00020";
         console.error(error);
         return;
@@ -378,20 +440,153 @@
       showApp(data.user);
     });
 
+    forgotButton.addEventListener("click", async () => {
+      const email =
+        document.getElementById("loginEmail").value.trim();
+
+      loginMessage.textContent = "";
+
+      if (!email) {
+        loginMessage.textContent =
+          "Digite seu e-mail primeiro.";
+
+        loginMessage.style.color = "#b00020";
+        return;
+      }
+
+      forgotButton.disabled = true;
+      forgotButton.textContent = "Enviando...";
+
+      const { error } =
+        await supabaseClient.auth.resetPasswordForEmail(
+          email,
+          {
+            redirectTo: SITE_URL
+          }
+        );
+
+      forgotButton.disabled = false;
+      forgotButton.textContent = "Esqueci minha senha";
+
+      if (error) {
+        loginMessage.textContent =
+          "Não foi possível enviar o e-mail: " + error.message;
+
+        loginMessage.style.color = "#b00020";
+        return;
+      }
+
+      loginMessage.textContent =
+        "E-mail enviado. Verifique sua caixa de entrada.";
+
+      loginMessage.style.color = "#167a3d";
+    });
+
+    savePasswordButton.addEventListener("click", async () => {
+      const newPassword =
+        document.getElementById("newPassword").value;
+
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+      resetMessage.textContent = "";
+
+      if (!newPassword || !confirmPassword) {
+        resetMessage.textContent =
+          "Preencha os dois campos.";
+
+        resetMessage.style.color = "#b00020";
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        resetMessage.textContent =
+          "A senha deve ter pelo menos 6 caracteres.";
+
+        resetMessage.style.color = "#b00020";
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        resetMessage.textContent =
+          "As senhas não são iguais.";
+
+        resetMessage.style.color = "#b00020";
+        return;
+      }
+
+      savePasswordButton.disabled = true;
+      savePasswordButton.textContent = "Salvando...";
+
+      const { error } =
+        await supabaseClient.auth.updateUser({
+          password: newPassword
+        });
+
+      savePasswordButton.disabled = false;
+      savePasswordButton.textContent = "Salvar nova senha";
+
+      if (error) {
+        resetMessage.textContent =
+          "Não foi possível alterar a senha: " + error.message;
+
+        resetMessage.style.color = "#b00020";
+        return;
+      }
+
+      resetMessage.textContent =
+        "Senha alterada com sucesso!";
+
+      resetMessage.style.color = "#167a3d";
+
+      setTimeout(() => {
+        showLogin();
+      }, 1500);
+    });
+
+    backToLoginButton.addEventListener("click", () => {
+      showLogin();
+    });
+
     logoutButton.addEventListener("click", async () => {
       await supabaseClient.auth.signOut();
       showLogin();
     });
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        showApp(session.user);
+    supabaseClient.auth.onAuthStateChange(
+      (event, session) => {
+
+        if (event === "PASSWORD_RECOVERY") {
+          showReset();
+          return;
+        }
+
+        if (
+          session?.user &&
+          event !== "SIGNED_OUT"
+        ) {
+          showApp(session.user);
+          return;
+        }
+
+        if (!session) {
+          showLogin();
+        }
+      }
+    );
+
+    async function initialize() {
+      const { data } =
+        await supabaseClient.auth.getSession();
+
+      if (data.session?.user) {
+        showApp(data.session.user);
       } else {
         showLogin();
       }
-    });
+    }
 
-    checkSession();
+    initialize();
   </script>
 
 </body>
