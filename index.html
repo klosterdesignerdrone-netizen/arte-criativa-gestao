@@ -3,11 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arte Criativa Estúdio</title>
+
+  <title>Arte Criativa Estúdio | Gestão</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    :root {
+      --navy: #0d1b36;
+      --navy-light: #182d50;
+      --gold: #d4af37;
+      --white: #ffffff;
+      --background: #f4f5f7;
+      --text: #17243a;
+      --muted: #687386;
+      --border: #dce0e7;
+      --success: #167a3d;
+      --danger: #b42318;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,72 +29,99 @@
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f5f7;
-      color: #10203b;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--background);
+      color: var(--text);
       min-height: 100vh;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: wait;
     }
 
     .hidden {
       display: none !important;
     }
 
-    #loginScreen,
-    #resetScreen {
+    /* TELAS DE LOGIN E RECUPERAÇÃO */
+
+    .auth-screen {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: linear-gradient(135deg, #0d1b36, #16294d);
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
     }
 
-    .box {
+    .auth-box {
       width: 100%;
-      max-width: 430px;
-      background: white;
-      padding: 35px;
+      max-width: 440px;
+      padding: 36px;
+      background: var(--white);
       border-radius: 18px;
-      box-shadow: 0 15px 40px rgba(0,0,0,.20);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .2);
     }
 
-    .logo-title {
+    .brand {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 30px;
     }
 
-    .logo-title h1 {
-      font-size: 28px;
-      color: #0d1b36;
+    .brand h1 {
+      color: var(--navy);
+      font-size: 27px;
+      line-height: 1.25;
     }
 
-    .logo-title p {
-      margin-top: 7px;
-      color: #d4af37;
+    .brand p {
+      margin-top: 8px;
+      color: #a78313;
       font-weight: bold;
     }
 
+    .auth-description {
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: -12px 0 22px;
+      font-size: 14px;
+    }
+
     .field {
-      margin-bottom: 17px;
+      margin-bottom: 18px;
     }
 
     .field label {
       display: block;
-      margin-bottom: 7px;
+      margin-bottom: 8px;
       font-weight: bold;
+      font-size: 14px;
     }
 
     .field input {
       width: 100%;
-      padding: 13px;
-      border: 1px solid #d4d7dd;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
       border-radius: 9px;
-      font-size: 15px;
+      background: white;
+      color: var(--text);
     }
 
     .field input:focus {
       outline: none;
-      border-color: #d4af37;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, .15);
     }
 
     .btn {
@@ -89,120 +130,195 @@
       border: none;
       border-radius: 9px;
       font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
+      transition: opacity .15s;
     }
 
     .btn-primary {
-      background: #d4af37;
-      color: #0d1b36;
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    .btn-primary:hover {
+      opacity: .9;
     }
 
     .btn-secondary {
-      margin-top: 10px;
-      background: #0d1b36;
+      background: var(--navy);
       color: white;
+      margin-top: 10px;
     }
 
-    .link-button {
+    .btn-link {
       display: block;
-      margin: 15px auto 0;
+      margin: 16px auto 0;
+      padding: 5px;
       border: none;
-      background: none;
-      color: #0d1b36;
+      background: transparent;
+      color: var(--navy);
       text-decoration: underline;
-      cursor: pointer;
       font-size: 14px;
     }
 
     .message {
-      margin-top: 15px;
-      text-align: center;
+      margin-top: 16px;
+      padding: 10px;
+      border-radius: 8px;
       font-size: 14px;
-      line-height: 1.4;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
     }
 
+    .message:empty {
+      display: none;
+    }
+
+    .message.success {
+      color: var(--success);
+      background: #ecfdf3;
+    }
+
+    .message.error {
+      color: var(--danger);
+      background: #fef3f2;
+    }
+
+    .message.info {
+      color: var(--navy);
+      background: #eef4ff;
+    }
+
+    /* PAINEL PRINCIPAL */
+
     header {
-      background: #0d1b36;
+      background: var(--navy);
       color: white;
-      padding: 20px 30px;
+      padding: 22px 5%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 15px;
+      justify-content: space-between;
+      gap: 20px;
       flex-wrap: wrap;
     }
 
     header h1 {
-      font-size: 26px;
+      font-size: 27px;
     }
 
     header p {
-      color: #d4af37;
-      margin-top: 4px;
+      color: var(--gold);
+      margin-top: 5px;
     }
 
     .btn-logout {
+      padding: 10px 16px;
       background: transparent;
-      color: white;
-      border: 1px solid #d4af37;
-      padding: 9px 15px;
+      border: 1px solid var(--gold);
       border-radius: 8px;
-      cursor: pointer;
+      color: white;
     }
 
     main {
-      max-width: 1200px;
-      margin: 30px auto;
-      padding: 0 20px;
+      width: min(1200px, 92%);
+      margin: 32px auto;
     }
 
     .welcome {
+      padding: 28px;
       background: white;
       border-radius: 16px;
-      padding: 25px;
       margin-bottom: 25px;
-      box-shadow: 0 4px 14px rgba(0,0,0,.07);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
     }
 
     .welcome h2 {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .welcome p {
+      color: var(--muted);
+      line-height: 1.5;
     }
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 18px;
     }
 
     .card {
+      padding: 23px;
       background: white;
-      border-radius: 15px;
-      padding: 22px;
-      border-top: 4px solid #d4af37;
-      box-shadow: 0 4px 14px rgba(0,0,0,.07);
+      border-top: 4px solid var(--gold);
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
     }
 
     .card h3 {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      font-size: 18px;
     }
 
     .card p {
-      color: #666;
+      color: var(--muted);
       font-size: 14px;
+      line-height: 1.4;
     }
 
     .value {
-      font-size: 25px;
+      margin-top: 14px;
+      font-size: 26px;
       font-weight: bold;
-      margin-top: 12px;
+      color: var(--navy);
+      overflow-wrap: anywhere;
+    }
+
+    .notice {
+      margin-top: 25px;
+      padding: 17px;
+      background: #fff9e8;
+      border: 1px solid #f1dfa1;
+      border-radius: 10px;
+      line-height: 1.5;
+      font-size: 14px;
     }
 
     footer {
+      padding: 30px 15px;
       text-align: center;
-      color: #777;
+      color: var(--muted);
       font-size: 13px;
-      padding: 30px;
+    }
+
+    @media (max-width: 850px) {
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .auth-box {
+        padding: 25px 20px;
+      }
+
+      .brand h1 {
+        font-size: 24px;
+      }
+
+      header {
+        padding: 20px;
+      }
+
+      header h1 {
+        font-size: 23px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .value {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
@@ -210,74 +326,143 @@
 <body>
 
   <!-- LOGIN -->
-  <section id="loginScreen">
-    <div class="box">
-      <div class="logo-title">
+  <section id="loginScreen" class="auth-screen">
+    <div class="auth-box">
+
+      <div class="brand">
         <h1>Arte Criativa Estúdio</h1>
         <p>Gestão do Estúdio</p>
       </div>
 
-      <div class="field">
-        <label for="loginEmail">E-mail</label>
-        <input type="email" id="loginEmail" placeholder="Seu e-mail">
-      </div>
+      <form id="loginForm">
+        <div class="field">
+          <label for="loginEmail">E-mail</label>
+          <input
+            id="loginEmail"
+            type="email"
+            autocomplete="username"
+            placeholder="Digite seu e-mail"
+            required
+          >
+        </div>
 
-      <div class="field">
-        <label for="loginPassword">Senha</label>
-        <input type="password" id="loginPassword" placeholder="Sua senha">
-      </div>
+        <div class="field">
+          <label for="loginPassword">Senha</label>
+          <input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Digite sua senha"
+            required
+          >
+        </div>
 
-      <button class="btn btn-primary" id="loginButton">
-        Entrar
-      </button>
+        <button class="btn btn-primary" id="loginButton" type="submit">
+          Entrar
+        </button>
+      </form>
 
-      <button class="link-button" id="forgotButton">
+      <button class="btn-link" id="forgotButton" type="button">
         Esqueci minha senha
       </button>
 
-      <div class="message" id="loginMessage"></div>
+      <div id="loginMessage" class="message" role="status" aria-live="polite"></div>
     </div>
   </section>
 
-  <!-- RECUPERAÇÃO -->
-  <section id="resetScreen" class="hidden">
-    <div class="box">
-      <div class="logo-title">
+
+  <!-- SOLICITAR RECUPERAÇÃO DE SENHA -->
+  <section id="forgotScreen" class="auth-screen hidden">
+    <div class="auth-box">
+
+      <div class="brand">
+        <h1>Recuperar senha</h1>
+        <p>Arte Criativa Estúdio</p>
+      </div>
+
+      <p class="auth-description">
+        Informe seu e-mail para receber um link de recuperação de senha.
+      </p>
+
+      <form id="forgotForm">
+        <div class="field">
+          <label for="forgotEmail">Seu e-mail</label>
+          <input
+            id="forgotEmail"
+            type="email"
+            autocomplete="email"
+            placeholder="Digite seu e-mail"
+            required
+          >
+        </div>
+
+        <button class="btn btn-primary" id="sendRecoveryButton" type="submit">
+          Enviar link de recuperação
+        </button>
+      </form>
+
+      <button class="btn-link" id="backFromForgot" type="button">
+        Voltar ao login
+      </button>
+
+      <div id="forgotMessage" class="message" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+
+  <!-- DEFINIR NOVA SENHA -->
+  <section id="resetScreen" class="auth-screen hidden">
+    <div class="auth-box">
+
+      <div class="brand">
         <h1>Nova senha</h1>
         <p>Arte Criativa Estúdio</p>
       </div>
 
-      <div class="field">
-        <label for="newPassword">Nova senha</label>
-        <input
-          type="password"
-          id="newPassword"
-          placeholder="Digite a nova senha"
-        >
-      </div>
+      <p class="auth-description">
+        Digite sua nova senha e confirme para concluir a recuperação.
+      </p>
 
-      <div class="field">
-        <label for="confirmPassword">Confirmar senha</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          placeholder="Digite novamente"
-        >
-      </div>
+      <form id="resetForm">
+        <div class="field">
+          <label for="newPassword">Nova senha</label>
+          <input
+            id="newPassword"
+            type="password"
+            autocomplete="new-password"
+            minlength="8"
+            placeholder="Crie uma senha com pelo menos 8 caracteres"
+            required
+          >
+        </div>
 
-      <button class="btn btn-primary" id="savePasswordButton">
-        Salvar nova senha
+        <div class="field">
+          <label for="confirmPassword">Confirme a nova senha</label>
+          <input
+            id="confirmPassword"
+            type="password"
+            autocomplete="new-password"
+            minlength="8"
+            placeholder="Digite a senha novamente"
+            required
+          >
+        </div>
+
+        <button class="btn btn-primary" id="savePasswordButton" type="submit">
+          Salvar nova senha
+        </button>
+      </form>
+
+      <button class="btn-link" id="backFromReset" type="button">
+        Voltar ao login
       </button>
 
-      <button class="link-button" id="backToLoginButton">
-        Voltar para o login
-      </button>
-
-      <div class="message" id="resetMessage"></div>
+      <div id="resetMessage" class="message" role="status" aria-live="polite"></div>
     </div>
   </section>
 
-  <!-- SISTEMA -->
+
+  <!-- PAINEL -->
   <section id="appScreen" class="hidden">
 
     <header>
@@ -286,44 +471,53 @@
         <p>Gestão do Estúdio</p>
       </div>
 
-      <button class="btn-logout" id="logoutButton">
+      <button class="btn-logout" id="logoutButton" type="button">
         Sair
       </button>
     </header>
 
     <main>
       <section class="welcome">
-        <h2>Bem-vinda ao seu sistema 👋</h2>
+        <h2>Bem-vinda ao seu sistema!</h2>
         <p id="userEmail"></p>
       </section>
 
       <section class="cards">
 
-        <div class="card">
+        <article class="card">
           <h3>💰 Faturamento</h3>
           <p>Vendas realizadas</p>
           <div class="value">R$ 0,00</div>
-        </div>
+        </article>
 
-        <div class="card">
+        <article class="card">
           <h3>📈 Lucro</h3>
-          <p>Lucro acumulado</p>
+          <p>Resultado financeiro</p>
           <div class="value">R$ 0,00</div>
-        </div>
+        </article>
 
-        <div class="card">
+        <article class="card">
           <h3>📋 Pedidos</h3>
           <p>Pedidos em andamento</p>
           <div class="value">0</div>
-        </div>
+        </article>
 
-        <div class="card">
+        <article class="card">
           <h3>💵 A receber</h3>
           <p>Valores pendentes</p>
           <div class="value">R$ 0,00</div>
-        </div>
+        </article>
 
       </section>
+
+      <div class="notice">
+        <strong>Próximas etapas:</strong>
+        vamos conectar este painel aos dados reais e acrescentar o cadastro
+        de materiais, equipamentos, precificação, produtos, pedidos,
+        agendamentos e financeiro.
+        Os valores mostrados acima são demonstrativos e ainda não representam
+        dados do banco.
+      </div>
     </main>
 
     <footer>
@@ -332,7 +526,10 @@
 
   </section>
 
+
   <script>
+    "use strict";
+
     const SUPABASE_URL =
       "https://mcpeihbimzrvrsnrzxwi.supabase.co";
 
@@ -341,6 +538,30 @@
 
     const SITE_URL =
       "https://arte-criativa-estudio-sistema.klosterdesignerdrone.workers.dev";
+
+    /*
+      IMPORTANTE:
+      O modo de recuperação é identificado ANTES de buscar a sessão.
+      Isso evita que a tela do painel substitua a tela de nova senha.
+    */
+    function isRecoveryUrl() {
+      const hashParams = new URLSearchParams(
+        window.location.hash.startsWith("#")
+          ? window.location.hash.slice(1)
+          : window.location.hash
+      );
+
+      const queryParams = new URLSearchParams(window.location.search);
+
+      return (
+        hashParams.get("type") === "recovery" ||
+        queryParams.get("type") === "recovery" ||
+        queryParams.has("code")
+      );
+    }
+
+    let recoveryMode = isRecoveryUrl();
+    let recoveryCompleted = false;
 
     const supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
@@ -356,232 +577,405 @@
     );
 
     const loginScreen = document.getElementById("loginScreen");
+    const forgotScreen = document.getElementById("forgotScreen");
     const resetScreen = document.getElementById("resetScreen");
     const appScreen = document.getElementById("appScreen");
 
+    const loginForm = document.getElementById("loginForm");
+    const forgotForm = document.getElementById("forgotForm");
+    const resetForm = document.getElementById("resetForm");
+
     const loginButton = document.getElementById("loginButton");
     const forgotButton = document.getElementById("forgotButton");
+    const sendRecoveryButton = document.getElementById("sendRecoveryButton");
+    const savePasswordButton = document.getElementById("savePasswordButton");
     const logoutButton = document.getElementById("logoutButton");
 
-    const savePasswordButton =
-      document.getElementById("savePasswordButton");
+    const backFromForgot = document.getElementById("backFromForgot");
+    const backFromReset = document.getElementById("backFromReset");
 
-    const backToLoginButton =
-      document.getElementById("backToLoginButton");
+    const loginMessage = document.getElementById("loginMessage");
+    const forgotMessage = document.getElementById("forgotMessage");
+    const resetMessage = document.getElementById("resetMessage");
 
-    const loginMessage =
-      document.getElementById("loginMessage");
+    const userEmail = document.getElementById("userEmail");
 
-    const resetMessage =
-      document.getElementById("resetMessage");
-
-    const userEmail =
-      document.getElementById("userEmail");
-
-    function showLogin() {
-      loginScreen.classList.remove("hidden");
+    function hideAllScreens() {
+      loginScreen.classList.add("hidden");
+      forgotScreen.classList.add("hidden");
       resetScreen.classList.add("hidden");
       appScreen.classList.add("hidden");
+    }
+
+    function setMessage(element, text, type = "info") {
+      element.textContent = text;
+      element.className = "message " + type;
+    }
+
+    function clearMessage(element) {
+      element.textContent = "";
+      element.className = "message";
+    }
+
+    function showLogin() {
+      hideAllScreens();
+      loginScreen.classList.remove("hidden");
+    }
+
+    function showForgot() {
+      hideAllScreens();
+      forgotScreen.classList.remove("hidden");
+
+      const currentEmail = document.getElementById("loginEmail").value.trim();
+
+      if (currentEmail) {
+        document.getElementById("forgotEmail").value = currentEmail;
+      }
+
+      clearMessage(forgotMessage);
     }
 
     function showReset() {
-      loginScreen.classList.add("hidden");
+      hideAllScreens();
       resetScreen.classList.remove("hidden");
-      appScreen.classList.add("hidden");
     }
 
     function showApp(user) {
-      loginScreen.classList.add("hidden");
-      resetScreen.classList.add("hidden");
+      if (recoveryMode && !recoveryCompleted) {
+        showReset();
+        return;
+      }
+
+      hideAllScreens();
       appScreen.classList.remove("hidden");
 
-      userEmail.textContent =
-        "Usuário conectado: " + (user?.email || "");
+      userEmail.textContent = user && user.email
+        ? "Usuário conectado: " + user.email
+        : "Usuário conectado";
     }
 
-    loginButton.addEventListener("click", async () => {
-      const email =
-        document.getElementById("loginEmail").value.trim();
+    function cleanRecoveryUrl() {
+      try {
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      } catch (error) {
+        console.warn("Não foi possível limpar a URL:", error);
+      }
+    }
 
-      const password =
-        document.getElementById("loginPassword").value;
+    /*
+      LOGIN
+    */
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessage(loginMessage);
 
-      loginMessage.textContent = "";
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
 
       if (!email || !password) {
-        loginMessage.textContent =
-          "Preencha o e-mail e a senha.";
-
-        loginMessage.style.color = "#b00020";
+        setMessage(loginMessage, "Preencha o e-mail e a senha.", "error");
         return;
       }
 
       loginButton.disabled = true;
       loginButton.textContent = "Entrando...";
 
-      const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
           email,
           password
         });
 
-      loginButton.disabled = false;
-      loginButton.textContent = "Entrar";
+        if (error) {
+          setMessage(
+            loginMessage,
+            "Não foi possível entrar. Confira o e-mail e a senha.",
+            "error"
+          );
+          console.error("Erro no login:", error.message);
+          return;
+        }
 
-      if (error) {
-        loginMessage.textContent =
-          "Não foi possível entrar. Confira o e-mail e a senha.";
+        recoveryMode = false;
+        recoveryCompleted = false;
+        showApp(data.user);
 
-        loginMessage.style.color = "#b00020";
+      } catch (error) {
         console.error(error);
-        return;
+        setMessage(
+          loginMessage,
+          "Ocorreu um erro de conexão. Tente novamente.",
+          "error"
+        );
+      } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = "Entrar";
       }
-
-      showApp(data.user);
     });
 
-    forgotButton.addEventListener("click", async () => {
-      const email =
-        document.getElementById("loginEmail").value.trim();
+    /*
+      ABRIR TELA DE RECUPERAÇÃO
+    */
+    forgotButton.addEventListener("click", showForgot);
 
-      loginMessage.textContent = "";
+    backFromForgot.addEventListener("click", showLogin);
+
+    /*
+      SOLICITAR E-MAIL DE RECUPERAÇÃO
+    */
+    forgotForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessage(forgotMessage);
+
+      const email = document.getElementById("forgotEmail").value.trim();
 
       if (!email) {
-        loginMessage.textContent =
-          "Digite seu e-mail primeiro.";
-
-        loginMessage.style.color = "#b00020";
+        setMessage(forgotMessage, "Informe seu e-mail.", "error");
         return;
       }
 
-      forgotButton.disabled = true;
-      forgotButton.textContent = "Enviando...";
+      sendRecoveryButton.disabled = true;
+      sendRecoveryButton.textContent = "Enviando...";
 
-      const { error } =
-        await supabaseClient.auth.resetPasswordForEmail(
-          email,
-          {
+      try {
+        const { error } =
+          await supabaseClient.auth.resetPasswordForEmail(email, {
             redirectTo: SITE_URL
-          }
+          });
+
+        if (error) {
+          console.error("Erro de recuperação:", error.message);
+
+          setMessage(
+            forgotMessage,
+            error.message.includes("rate limit")
+              ? "O limite de envio de e-mails foi atingido. Aguarde antes de tentar novamente."
+              : "Não foi possível enviar o e-mail. Verifique a configuração de autenticação e tente novamente.",
+            "error"
+          );
+
+          return;
+        }
+
+        setMessage(
+          forgotMessage,
+          "Se esse e-mail estiver cadastrado, você receberá um link de recuperação. Verifique também o spam.",
+          "success"
         );
 
-      forgotButton.disabled = false;
-      forgotButton.textContent = "Esqueci minha senha";
+      } catch (error) {
+        console.error(error);
 
-      if (error) {
-        loginMessage.textContent =
-          "Não foi possível enviar o e-mail: " + error.message;
+        setMessage(
+          forgotMessage,
+          "Não foi possível conectar ao serviço de e-mail.",
+          "error"
+        );
 
-        loginMessage.style.color = "#b00020";
-        return;
+      } finally {
+        sendRecoveryButton.disabled = false;
+        sendRecoveryButton.textContent = "Enviar link de recuperação";
       }
-
-      loginMessage.textContent =
-        "E-mail enviado. Verifique sua caixa de entrada.";
-
-      loginMessage.style.color = "#167a3d";
     });
 
-    savePasswordButton.addEventListener("click", async () => {
-      const newPassword =
-        document.getElementById("newPassword").value;
+    /*
+      DEFINIR NOVA SENHA
+    */
+    resetForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearMessage(resetMessage);
 
-      const confirmPassword =
-        document.getElementById("confirmPassword").value;
+      const newPassword = document.getElementById("newPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
 
-      resetMessage.textContent = "";
-
-      if (!newPassword || !confirmPassword) {
-        resetMessage.textContent =
-          "Preencha os dois campos.";
-
-        resetMessage.style.color = "#b00020";
-        return;
-      }
-
-      if (newPassword.length < 6) {
-        resetMessage.textContent =
-          "A senha deve ter pelo menos 6 caracteres.";
-
-        resetMessage.style.color = "#b00020";
+      if (newPassword.length < 8) {
+        setMessage(
+          resetMessage,
+          "A nova senha precisa ter pelo menos 8 caracteres.",
+          "error"
+        );
         return;
       }
 
       if (newPassword !== confirmPassword) {
-        resetMessage.textContent =
-          "As senhas não são iguais.";
-
-        resetMessage.style.color = "#b00020";
+        setMessage(resetMessage, "As senhas não são iguais.", "error");
         return;
       }
 
       savePasswordButton.disabled = true;
       savePasswordButton.textContent = "Salvando...";
 
-      const { error } =
-        await supabaseClient.auth.updateUser({
+      try {
+        /*
+          A SDK precisa reconhecer a sessão temporária criada pelo
+          link de recuperação antes de permitir a alteração da senha.
+        */
+        const { data: sessionData, error: sessionError } =
+          await supabaseClient.auth.getSession();
+
+        if (sessionError || !sessionData.session) {
+          setMessage(
+            resetMessage,
+            "O link de recuperação expirou ou já foi utilizado. Solicite um novo link.",
+            "error"
+          );
+          return;
+        }
+
+        const { error } = await supabaseClient.auth.updateUser({
           password: newPassword
         });
 
-      savePasswordButton.disabled = false;
-      savePasswordButton.textContent = "Salvar nova senha";
+        if (error) {
+          console.error("Erro ao atualizar senha:", error.message);
 
-      if (error) {
-        resetMessage.textContent =
-          "Não foi possível alterar a senha: " + error.message;
+          setMessage(
+            resetMessage,
+            "Não foi possível alterar a senha. Verifique se o link ainda é válido e tente novamente.",
+            "error"
+          );
+          return;
+        }
 
-        resetMessage.style.color = "#b00020";
-        return;
-      }
+        /*
+          A senha foi alterada. Saímos da sessão de recuperação para
+          que o evento de atualização não volte a abrir essa tela.
+        */
+        recoveryCompleted = true;
+        recoveryMode = false;
 
-      resetMessage.textContent =
-        "Senha alterada com sucesso!";
+        await supabaseClient.auth.signOut();
+        cleanRecoveryUrl();
 
-      resetMessage.style.color = "#167a3d";
+        document.getElementById("loginPassword").value = "";
+        document.getElementById("newPassword").value = "";
+        document.getElementById("confirmPassword").value = "";
 
-      setTimeout(() => {
         showLogin();
-      }, 1500);
+
+        setMessage(
+          loginMessage,
+          "Senha alterada com sucesso! Entre com sua nova senha.",
+          "success"
+        );
+
+      } catch (error) {
+        console.error(error);
+
+        setMessage(
+          resetMessage,
+          "Ocorreu um erro ao salvar a senha. Tente novamente.",
+          "error"
+        );
+
+      } finally {
+        savePasswordButton.disabled = false;
+        savePasswordButton.textContent = "Salvar nova senha";
+      }
     });
 
-    backToLoginButton.addEventListener("click", () => {
+    /*
+      SAIR DA TELA DE RECUPERAÇÃO
+    */
+    backFromReset.addEventListener("click", async () => {
+      recoveryMode = false;
+      recoveryCompleted = true;
+
+      await supabaseClient.auth.signOut();
+      cleanRecoveryUrl();
       showLogin();
     });
 
+    /*
+      SAIR DO SISTEMA
+    */
     logoutButton.addEventListener("click", async () => {
+      recoveryMode = false;
+      recoveryCompleted = false;
+
       await supabaseClient.auth.signOut();
       showLogin();
     });
 
-    supabaseClient.auth.onAuthStateChange(
-      (event, session) => {
+    /*
+      ESTADO DE AUTENTICAÇÃO
 
-        if (event === "PASSWORD_RECOVERY") {
+      A verificação de recoveryMode vem antes da abertura do painel.
+      Assim, eventos de sessão não substituem a tela de nova senha.
+    */
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        recoveryMode = true;
+        recoveryCompleted = false;
+        showReset();
+        return;
+      }
+
+      if (recoveryMode && !recoveryCompleted) {
+        showReset();
+        return;
+      }
+
+      if (event === "SIGNED_OUT") {
+        showLogin();
+        return;
+      }
+
+      if (session && session.user) {
+        showApp(session.user);
+        return;
+      }
+
+      showLogin();
+    });
+
+    /*
+      INICIALIZAÇÃO
+
+      Se a URL veio do link de recuperação, preserva-se a tela
+      de nova senha enquanto a SDK restaura a sessão temporária.
+    */
+    async function initialize() {
+      if (recoveryMode) {
+        showReset();
+      } else {
+        showLogin();
+      }
+
+      try {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (recoveryMode) {
           showReset();
+
+          if (error || !data.session) {
+            setMessage(
+              resetMessage,
+              "Não foi possível validar o link. Ele pode ter expirado ou já ter sido utilizado. Solicite uma nova recuperação.",
+              "error"
+            );
+          }
+
           return;
         }
 
-        if (
-          session?.user &&
-          event !== "SIGNED_OUT"
-        ) {
-          showApp(session.user);
+        if (error) {
+          showLogin();
           return;
         }
 
-        if (!session) {
+        if (data.session && data.session.user) {
+          showApp(data.session.user);
+        } else {
           showLogin();
         }
-      }
-    );
 
-    async function initialize() {
-      const { data } =
-        await supabaseClient.auth.getSession();
-
-      if (data.session?.user) {
-        showApp(data.session.user);
-      } else {
+      } catch (error) {
+        console.error("Erro ao iniciar o sistema:", error);
         showLogin();
       }
     }
