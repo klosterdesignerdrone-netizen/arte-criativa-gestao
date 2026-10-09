@@ -3,985 +3,391 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Arte Criativa Estúdio | Gestão</title>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
-    :root {
-      --navy: #0d1b36;
-      --navy-light: #182d50;
-      --gold: #d4af37;
-      --white: #ffffff;
-      --background: #f4f5f7;
-      --text: #17243a;
-      --muted: #687386;
-      --border: #dce0e7;
-      --success: #167a3d;
-      --danger: #b42318;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--background);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: .6;
-      cursor: wait;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* TELAS DE LOGIN E RECUPERAÇÃO */
-
-    .auth-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: linear-gradient(135deg, var(--navy), var(--navy-light));
-    }
-
-    .auth-box {
-      width: 100%;
-      max-width: 440px;
-      padding: 36px;
-      background: var(--white);
-      border-radius: 18px;
-      box-shadow: 0 18px 50px rgba(0, 0, 0, .2);
-    }
-
-    .brand {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .brand h1 {
-      color: var(--navy);
-      font-size: 27px;
-      line-height: 1.25;
-    }
-
-    .brand p {
-      margin-top: 8px;
-      color: #a78313;
-      font-weight: bold;
-    }
-
-    .auth-description {
-      text-align: center;
-      color: var(--muted);
-      line-height: 1.5;
-      margin: -12px 0 22px;
-      font-size: 14px;
-    }
-
-    .field {
-      margin-bottom: 18px;
-    }
-
-    .field label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .field input {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      background: white;
-      color: var(--text);
-    }
-
-    .field input:focus {
-      outline: none;
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, .15);
-    }
-
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 9px;
-      font-weight: bold;
-      transition: opacity .15s;
-    }
-
-    .btn-primary {
-      background: var(--gold);
-      color: var(--navy);
-    }
-
-    .btn-primary:hover {
-      opacity: .9;
-    }
-
-    .btn-secondary {
-      background: var(--navy);
-      color: white;
-      margin-top: 10px;
-    }
-
-    .btn-link {
-      display: block;
-      margin: 16px auto 0;
-      padding: 5px;
-      border: none;
-      background: transparent;
-      color: var(--navy);
-      text-decoration: underline;
-      font-size: 14px;
-    }
-
-    .message {
-      margin-top: 16px;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    .message:empty {
-      display: none;
-    }
-
-    .message.success {
-      color: var(--success);
-      background: #ecfdf3;
-    }
-
-    .message.error {
-      color: var(--danger);
-      background: #fef3f2;
-    }
-
-    .message.info {
-      color: var(--navy);
-      background: #eef4ff;
-    }
-
-    /* PAINEL PRINCIPAL */
-
-    header {
-      background: var(--navy);
-      color: white;
-      padding: 22px 5%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    header h1 {
-      font-size: 27px;
-    }
-
-    header p {
-      color: var(--gold);
-      margin-top: 5px;
-    }
-
-    .btn-logout {
-      padding: 10px 16px;
-      background: transparent;
-      border: 1px solid var(--gold);
-      border-radius: 8px;
-      color: white;
-    }
-
-    main {
-      width: min(1200px, 92%);
-      margin: 32px auto;
-    }
-
-    .welcome {
-      padding: 28px;
-      background: white;
-      border-radius: 16px;
-      margin-bottom: 25px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
-    }
-
-    .welcome h2 {
-      margin-bottom: 10px;
-    }
-
-    .welcome p {
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .card {
-      padding: 23px;
-      background: white;
-      border-top: 4px solid var(--gold);
-      border-radius: 14px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
-    }
-
-    .card h3 {
-      margin-bottom: 12px;
-      font-size: 18px;
-    }
-
-    .card p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    .value {
-      margin-top: 14px;
-      font-size: 26px;
-      font-weight: bold;
-      color: var(--navy);
-      overflow-wrap: anywhere;
-    }
-
-    .notice {
-      margin-top: 25px;
-      padding: 17px;
-      background: #fff9e8;
-      border: 1px solid #f1dfa1;
-      border-radius: 10px;
-      line-height: 1.5;
-      font-size: 14px;
-    }
-
-    footer {
-      padding: 30px 15px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    @media (max-width: 850px) {
-      .cards {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 520px) {
-      .auth-box {
-        padding: 25px 20px;
-      }
-
-      .brand h1 {
-        font-size: 24px;
-      }
-
-      header {
-        padding: 20px;
-      }
-
-      header h1 {
-        font-size: 23px;
-      }
-
-      .cards {
-        grid-template-columns: 1fr;
-      }
-
-      .value {
-        font-size: 24px;
-      }
-    }
+    :root{--navy:#0d1b36;--navy2:#182d50;--gold:#d4af37;--bg:#f4f5f7;--text:#17243a;--muted:#687386;--border:#dce0e7;--success:#167a3d;--danger:#b42318}
+    *{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.6;cursor:wait}.hidden{display:none!important}
+    .auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,var(--navy),var(--navy2))}.auth-box{width:100%;max-width:440px;padding:34px;background:#fff;border-radius:18px;box-shadow:0 18px 50px #0003}.brand{text-align:center;margin-bottom:28px}.brand h1{color:var(--navy);font-size:27px;line-height:1.25}.brand p{margin-top:8px;color:#a78313;font-weight:bold}.auth-description{text-align:center;color:var(--muted);line-height:1.5;margin:-10px 0 22px;font-size:14px}
+    .field{margin-bottom:15px}.field label{display:block;margin-bottom:7px;font-size:14px;font-weight:bold}.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text)}.field textarea{min-height:78px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px #d4af3726}.btn{border:0;border-radius:8px;padding:11px 15px;font-weight:bold}.btn-primary{background:var(--gold);color:var(--navy)}.btn-dark{background:var(--navy);color:#fff}.btn-outline{border:1px solid var(--gold);background:white;color:var(--navy)}.btn-danger{background:#fff0ef;border:1px solid #ffd5d2;color:var(--danger)}.btn-link{display:block;margin:15px auto 0;border:0;background:none;color:var(--navy);text-decoration:underline;font-size:14px}.btn-wide{width:100%;padding:13px}.message{margin-top:14px;padding:10px;border-radius:8px;font-size:14px;line-height:1.45;overflow-wrap:anywhere}.message:empty{display:none}.message.success{color:var(--success);background:#ecfdf3}.message.error{color:var(--danger);background:#fef3f2}.message.info{color:var(--navy);background:#eef4ff}
+    header{background:var(--navy);color:#fff;padding:19px 4%;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}header h1{font-size:25px}header p{color:var(--gold);margin-top:4px}.header-right{display:flex;gap:10px;align-items:center}.btn-logout{padding:9px 14px;background:transparent;border:1px solid var(--gold);border-radius:8px;color:#fff}.nav{background:white;border-bottom:1px solid var(--border);padding:0 4%;display:flex;gap:8px;overflow-x:auto}.nav button{border:0;background:none;color:var(--muted);padding:15px 16px;white-space:nowrap;border-bottom:3px solid transparent;font-weight:bold}.nav button.active{color:var(--navy);border-bottom-color:var(--gold)}main{width:min(1300px,94%);margin:28px auto}.welcome{padding:24px;background:#fff;border-radius:15px;margin-bottom:22px;box-shadow:0 4px 14px #0000000a}.welcome h2{margin-bottom:8px}.welcome p{color:var(--muted);line-height:1.5}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.card{padding:21px;background:#fff;border-top:4px solid var(--gold);border-radius:13px;box-shadow:0 4px 14px #0000000a}.card h3{margin-bottom:10px;font-size:17px}.card p{color:var(--muted);font-size:14px}.value{margin-top:12px;font-size:24px;font-weight:bold;color:var(--navy);overflow-wrap:anywhere}.notice{margin-top:22px;padding:16px;background:#fff9e8;border:1px solid #f1dfa1;border-radius:9px;line-height:1.5;font-size:14px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}.section-head h2{font-size:23px}.section-head p{color:var(--muted);margin-top:5px;font-size:14px}.panel{background:white;border-radius:14px;padding:22px;margin-bottom:20px;box-shadow:0 4px 14px #0000000a}.panel h3{margin-bottom:17px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 15px}.span-2{grid-column:span 2}.span-3{grid-column:span 3}.form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:5px}.search-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.search-row input{flex:1;min-width:220px;padding:11px 12px;border:1px solid var(--border);border-radius:8px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf0f3;vertical-align:top}th{background:#f8f9fb;color:#4b5565;font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}td .sub{display:block;color:var(--muted);font-size:12px;margin-top:4px}.stock-low{color:var(--danger);font-weight:bold}.stock-ok{color:var(--success)}.empty{text-align:center;color:var(--muted);padding:28px}.small{font-size:12px;color:var(--muted);line-height:1.5}.footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}.status-line{margin:10px 0;color:var(--muted);font-size:13px}
+    @media(max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.span-3{grid-column:span 2}}
+    @media(max-width:560px){.auth-box{padding:25px 20px}.brand h1{font-size:23px}header{padding:18px}header h1{font-size:22px}.cards,.form-grid{grid-template-columns:1fr}.span-2,.span-3{grid-column:span 1}.panel{padding:16px}main{width:94%;margin:20px auto}.section-head h2{font-size:21px}}
   </style>
 </head>
-
 <body>
-
-  <!-- LOGIN -->
   <section id="loginScreen" class="auth-screen">
     <div class="auth-box">
-
-      <div class="brand">
-        <h1>Arte Criativa Estúdio</h1>
-        <p>Gestão do Estúdio</p>
-      </div>
-
+      <div class="brand"><h1>Arte Criativa Estúdio</h1><p>Gestão do Estúdio</p></div>
       <form id="loginForm">
-        <div class="field">
-          <label for="loginEmail">E-mail</label>
-          <input
-            id="loginEmail"
-            type="email"
-            autocomplete="username"
-            placeholder="Digite seu e-mail"
-            required
-          >
-        </div>
-
-        <div class="field">
-          <label for="loginPassword">Senha</label>
-          <input
-            id="loginPassword"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Digite sua senha"
-            required
-          >
-        </div>
-
-        <button class="btn btn-primary" id="loginButton" type="submit">
-          Entrar
-        </button>
+        <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" autocomplete="username" placeholder="Digite seu e-mail" required></div>
+        <div class="field"><label for="loginPassword">Senha</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Digite sua senha" required></div>
+        <button class="btn btn-primary btn-wide" id="loginButton" type="submit">Entrar</button>
       </form>
-
-      <button class="btn-link" id="forgotButton" type="button">
-        Esqueci minha senha
-      </button>
-
+      <button class="btn-link" id="forgotButton" type="button">Esqueci minha senha</button>
       <div id="loginMessage" class="message" role="status" aria-live="polite"></div>
     </div>
   </section>
 
-
-  <!-- SOLICITAR RECUPERAÇÃO DE SENHA -->
   <section id="forgotScreen" class="auth-screen hidden">
     <div class="auth-box">
-
-      <div class="brand">
-        <h1>Recuperar senha</h1>
-        <p>Arte Criativa Estúdio</p>
-      </div>
-
-      <p class="auth-description">
-        Informe seu e-mail para receber um link de recuperação de senha.
-      </p>
-
-      <form id="forgotForm">
-        <div class="field">
-          <label for="forgotEmail">Seu e-mail</label>
-          <input
-            id="forgotEmail"
-            type="email"
-            autocomplete="email"
-            placeholder="Digite seu e-mail"
-            required
-          >
-        </div>
-
-        <button class="btn btn-primary" id="sendRecoveryButton" type="submit">
-          Enviar link de recuperação
-        </button>
-      </form>
-
-      <button class="btn-link" id="backFromForgot" type="button">
-        Voltar ao login
-      </button>
-
+      <div class="brand"><h1>Recuperar senha</h1><p>Arte Criativa Estúdio</p></div>
+      <p class="auth-description">Informe seu e-mail para receber o link de recuperação.</p>
+      <form id="forgotForm"><div class="field"><label for="forgotEmail">Seu e-mail</label><input id="forgotEmail" type="email" autocomplete="email" required placeholder="Digite seu e-mail"></div><button class="btn btn-primary btn-wide" id="sendRecoveryButton" type="submit">Enviar link de recuperação</button></form>
+      <button class="btn-link" id="backFromForgot" type="button">Voltar ao login</button>
       <div id="forgotMessage" class="message" role="status" aria-live="polite"></div>
     </div>
   </section>
 
-
-  <!-- DEFINIR NOVA SENHA -->
   <section id="resetScreen" class="auth-screen hidden">
     <div class="auth-box">
-
-      <div class="brand">
-        <h1>Nova senha</h1>
-        <p>Arte Criativa Estúdio</p>
-      </div>
-
-      <p class="auth-description">
-        Digite sua nova senha e confirme para concluir a recuperação.
-      </p>
-
+      <div class="brand"><h1>Nova senha</h1><p>Arte Criativa Estúdio</p></div>
+      <p class="auth-description">Digite sua nova senha e confirme para concluir a recuperação.</p>
       <form id="resetForm">
-        <div class="field">
-          <label for="newPassword">Nova senha</label>
-          <input
-            id="newPassword"
-            type="password"
-            autocomplete="new-password"
-            minlength="8"
-            placeholder="Crie uma senha com pelo menos 8 caracteres"
-            required
-          >
-        </div>
-
-        <div class="field">
-          <label for="confirmPassword">Confirme a nova senha</label>
-          <input
-            id="confirmPassword"
-            type="password"
-            autocomplete="new-password"
-            minlength="8"
-            placeholder="Digite a senha novamente"
-            required
-          >
-        </div>
-
-        <button class="btn btn-primary" id="savePasswordButton" type="submit">
-          Salvar nova senha
-        </button>
+        <div class="field"><label for="newPassword">Nova senha</label><input id="newPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Pelo menos 8 caracteres" required></div>
+        <div class="field"><label for="confirmPassword">Confirme a nova senha</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Digite novamente" required></div>
+        <button class="btn btn-primary btn-wide" id="savePasswordButton" type="submit">Salvar nova senha</button>
       </form>
-
-      <button class="btn-link" id="backFromReset" type="button">
-        Voltar ao login
-      </button>
-
+      <button class="btn-link" id="backFromReset" type="button">Voltar ao login</button>
       <div id="resetMessage" class="message" role="status" aria-live="polite"></div>
     </div>
   </section>
 
-
-  <!-- PAINEL -->
   <section id="appScreen" class="hidden">
-
-    <header>
-      <div>
-        <h1>Arte Criativa Estúdio</h1>
-        <p>Gestão do Estúdio</p>
-      </div>
-
-      <button class="btn-logout" id="logoutButton" type="button">
-        Sair
-      </button>
-    </header>
-
+    <header><div><h1>Arte Criativa Estúdio</h1><p>Gestão do Estúdio</p></div><div class="header-right"><button class="btn-logout" id="logoutButton" type="button">Sair</button></div></header>
+    <nav class="nav" aria-label="Menu principal">
+      <button type="button" class="active" data-view="dashboardView">Visão geral</button>
+      <button type="button" data-view="materialsView">Materiais e insumos</button>
+    </nav>
     <main>
-      <section class="welcome">
-        <h2>Bem-vinda ao seu sistema!</h2>
-        <p id="userEmail"></p>
+      <section id="dashboardView">
+        <div class="welcome"><h2>Bem-vinda ao seu sistema!</h2><p id="userEmail"></p></div>
+        <div class="cards">
+          <article class="card"><h3>💰 Faturamento</h3><p>Vendas realizadas</p><div class="value">R$ 0,00</div></article>
+          <article class="card"><h3>📈 Lucro</h3><p>Resultado financeiro</p><div class="value">R$ 0,00</div></article>
+          <article class="card"><h3>📋 Pedidos</h3><p>Pedidos em andamento</p><div class="value">0</div></article>
+          <article class="card"><h3>💵 A receber</h3><p>Valores pendentes</p><div class="value">R$ 0,00</div></article>
+        </div>
+        <div class="notice"><strong>Importante:</strong> os indicadores acima ainda são demonstrativos. A conexão do financeiro será implementada em uma etapa posterior.</div>
       </section>
 
-      <section class="cards">
+      <section id="materialsView" class="hidden">
+        <div class="section-head"><div><h2>Materiais e insumos</h2><p>Cadastre papéis, tintas, filamentos por cor, adesivos, embalagens e outros materiais.</p></div><button class="btn btn-primary" id="newMaterialButton" type="button">+ Novo material</button></div>
+        <div id="materialsFeedback" class="message" role="status" aria-live="polite"></div>
 
-        <article class="card">
-          <h3>💰 Faturamento</h3>
-          <p>Vendas realizadas</p>
-          <div class="value">R$ 0,00</div>
-        </article>
+        <section id="newMaterialPanel" class="panel hidden">
+          <h3>Cadastrar material e primeira compra</h3>
+          <p class="small" style="margin-top:-8px;margin-bottom:18px">Informe o conteúdo de cada pacote/rolo e o valor pago. O sistema calculará o custo por unidade-base e registrará a entrada inicial no estoque.</p>
+          <form id="newMaterialForm">
+            <div class="form-grid">
+              <div class="field"><label for="matName">Nome do material *</label><input id="matName" required placeholder="Ex.: Papel fotográfico glossy"></div>
+              <div class="field"><label for="matType">Categoria</label><select id="matType"><option value="paper">Papel</option><option value="ink">Tinta</option><option value="filament">Filamento 3D</option><option value="adhesive">Adesivo/vinil</option><option value="cutting">Lâmina/base de corte</option><option value="packaging">Embalagem</option><option value="other" selected>Outro</option></select></div>
+              <div class="field"><label for="matBrand">Marca</label><input id="matBrand" placeholder="Ex.: Epson, Bambu, Silhouette"></div>
+              <div class="field"><label for="matColor">Cor</label><input id="matColor" placeholder="Ex.: preto, dourado, branco"></div>
+              <div class="field"><label for="matFinish">Acabamento/tipo</label><input id="matFinish" placeholder="Ex.: glossy, matte, PLA Silk"></div>
+              <div class="field"><label for="matSize">Tamanho/formato</label><input id="matSize" placeholder="Ex.: A4, rolo de 1 kg, 70 ml"></div>
+              <div class="field"><label for="matGrammage">Gramatura (g/m²)</label><input id="matGrammage" type="number" min="0" step="0.01" placeholder="Ex.: 230"></div>
+              <div class="field"><label for="matWidth">Largura (mm)</label><input id="matWidth" type="number" min="0" step="0.01"></div>
+              <div class="field"><label for="matHeight">Altura (mm)</label><input id="matHeight" type="number" min="0" step="0.01"></div>
+              <div class="field"><label for="baseUnit">Unidade de cálculo *</label><select id="baseUnit" required><option value="folha">Folha</option><option value="g">Grama (g)</option><option value="kg">Quilograma (kg)</option><option value="ml">Mililitro (ml)</option><option value="l">Litro (l)</option><option value="un">Unidade (un)</option><option value="cm">Centímetro (cm)</option><option value="m">Metro (m)</option><option value="outro">Outro</option></select></div>
+              <div class="field"><label for="purchaseUnit">Unidade de compra *</label><input id="purchaseUnit" required placeholder="Ex.: pacote, rolo, frasco, unidade"></div>
+              <div class="field"><label for="contentPerPack">Unidades-base por pacote/rolo *</label><input id="contentPerPack" type="number" min="0.0001" step="0.0001" value="1" required><span class="sub">Ex.: pacote com 100 folhas = 100; rolo com 1 kg cadastrado em gramas = 1000.</span></div>
+              <div class="field"><label for="initialPurchaseQty">Quantidade de pacotes comprados *</label><input id="initialPurchaseQty" type="number" min="0.0001" step="0.0001" value="1" required></div>
+              <div class="field"><label for="initialPurchaseCost">Valor total pago (R$) *</label><input id="initialPurchaseCost" type="number" min="0" step="0.01" value="0" required></div>
+              <div class="field"><label for="matSupplier">Fornecedor</label><input id="matSupplier" placeholder="Ex.: Mercado Livre"></div>
+              <div class="field"><label for="matPurchaseDate">Data da compra *</label><input id="matPurchaseDate" type="date" required></div>
+              <div class="field"><label for="matMinimumStock">Estoque mínimo (unidade de cálculo)</label><input id="matMinimumStock" type="number" min="0" step="0.001" value="0"></div>
+              <div class="field"><label for="matSku">Código/SKU (opcional)</label><input id="matSku" placeholder="Código interno"></div>
+              <div class="field span-2"><label for="matNotes">Observações</label><textarea id="matNotes" placeholder="Detalhes úteis sobre o material"></textarea></div>
+            </div>
+            <div class="form-actions"><button id="saveNewMaterialButton" class="btn btn-primary" type="submit">Salvar material e compra</button><button class="btn btn-outline" id="cancelNewMaterialButton" type="button">Cancelar</button></div>
+          </form>
+        </section>
 
-        <article class="card">
-          <h3>📈 Lucro</h3>
-          <p>Resultado financeiro</p>
-          <div class="value">R$ 0,00</div>
-        </article>
+        <section id="purchasePanel" class="panel hidden">
+          <h3>Registrar nova compra</h3>
+          <p class="small" style="margin-top:-8px;margin-bottom:18px">O novo custo será registrado no histórico e o estoque e o custo médio serão atualizados.</p>
+          <form id="purchaseForm">
+            <div class="form-grid">
+              <div class="field span-2"><label for="purchaseMaterial">Material *</label><select id="purchaseMaterial" required></select></div>
+              <div class="field"><label for="purchaseDate">Data da compra *</label><input id="purchaseDate" type="date" required></div>
+              <div class="field"><label for="purchaseQuantity">Quantidade de pacotes/rolos *</label><input id="purchaseQuantity" type="number" min="0.0001" step="0.0001" value="1" required></div>
+              <div class="field"><label for="purchaseContent">Unidades-base por pacote *</label><input id="purchaseContent" type="number" min="0.0001" step="0.0001" required></div>
+              <div class="field"><label for="purchaseUnitName">Unidade de compra *</label><input id="purchaseUnitName" required placeholder="pacote, rolo, frasco..."></div>
+              <div class="field"><label for="purchaseTotalCost">Valor total pago (R$) *</label><input id="purchaseTotalCost" type="number" min="0" step="0.01" required></div>
+              <div class="field"><label for="purchaseSupplier">Fornecedor</label><input id="purchaseSupplier" placeholder="Fornecedor"></div>
+              <div class="field span-3"><label for="purchaseNotes">Observações</label><textarea id="purchaseNotes"></textarea></div>
+            </div>
+            <div class="form-actions"><button id="savePurchaseButton" class="btn btn-primary" type="submit">Registrar compra</button><button id="cancelPurchaseButton" class="btn btn-outline" type="button">Cancelar</button></div>
+          </form>
+          <div id="purchaseFeedback" class="message" role="status" aria-live="polite"></div>
+        </section>
 
-        <article class="card">
-          <h3>📋 Pedidos</h3>
-          <p>Pedidos em andamento</p>
-          <div class="value">0</div>
-        </article>
+        <section class="panel">
+          <div class="section-head"><div><h3 style="margin-bottom:0">Materiais cadastrados</h3><p>O estoque é exibido na unidade-base selecionada.</p></div></div>
+          <div class="search-row"><input id="materialSearch" type="search" placeholder="Buscar por nome, categoria, marca ou cor..."><button id="refreshMaterialsButton" class="btn btn-outline" type="button">Atualizar lista</button></div>
+          <div id="materialsStatus" class="status-line"></div>
+          <div class="table-wrap"><table><thead><tr><th>Material</th><th>Categoria / marca</th><th>Cor / tipo</th><th>Custo por unidade</th><th>Estoque</th><th>Ações</th></tr></thead><tbody id="materialsTableBody"><tr><td colspan="6" class="empty">Entre no sistema para carregar os materiais.</td></tr></tbody></table></div>
+        </section>
 
-        <article class="card">
-          <h3>💵 A receber</h3>
-          <p>Valores pendentes</p>
-          <div class="value">R$ 0,00</div>
-        </article>
-
+        <section class="panel">
+          <div class="section-head"><div><h3 style="margin-bottom:0">Compras recentes</h3><p>Histórico das compras registradas no sistema.</p></div><button id="refreshPurchasesButton" class="btn btn-outline" type="button">Atualizar histórico</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Data</th><th>Material</th><th>Fornecedor</th><th>Quantidade</th><th>Valor pago</th><th>Custo por unidade-base</th></tr></thead><tbody id="purchasesTableBody"><tr><td colspan="6" class="empty">Nenhuma compra carregada.</td></tr></tbody></table></div>
+        </section>
       </section>
-
-      <div class="notice">
-        <strong>Próximas etapas:</strong>
-        vamos conectar este painel aos dados reais e acrescentar o cadastro
-        de materiais, equipamentos, precificação, produtos, pedidos,
-        agendamentos e financeiro.
-        Os valores mostrados acima são demonstrativos e ainda não representam
-        dados do banco.
-      </div>
     </main>
-
-    <footer>
-      Arte Criativa Estúdio • Sistema de Gestão
-    </footer>
-
+    <div class="footer">Arte Criativa Estúdio • Sistema de Gestão</div>
   </section>
-
 
   <script>
     "use strict";
 
-    const SUPABASE_URL =
-      "https://mcpeihbimzrvrsnrzxwi.supabase.co";
+    const SUPABASE_URL = "https://mcpeihbimzrvrsnrzxwi.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_vGWok2ke7UNf6Pcd9vnxvA_RTPFU3PM";
+    const SITE_URL = "https://arte-criativa-estudio-sistema.klosterdesignerdrone.workers.dev";
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_vGWok2ke7UNf6Pcd9vnxvA_RTPFU3PM";
-
-    const SITE_URL =
-      "https://arte-criativa-estudio-sistema.klosterdesignerdrone.workers.dev";
-
-    /*
-      IMPORTANTE:
-      O modo de recuperação é identificado ANTES de buscar a sessão.
-      Isso evita que a tela do painel substitua a tela de nova senha.
-    */
-    function isRecoveryUrl() {
-      const hashParams = new URLSearchParams(
-        window.location.hash.startsWith("#")
-          ? window.location.hash.slice(1)
-          : window.location.hash
-      );
-
-      const queryParams = new URLSearchParams(window.location.search);
-
-      return (
-        hashParams.get("type") === "recovery" ||
-        queryParams.get("type") === "recovery" ||
-        queryParams.has("code")
-      );
+    function hasRecoveryParameters(){
+      const hash = new URLSearchParams(window.location.hash.startsWith("#") ? window.location.hash.slice(1) : window.location.hash);
+      const query = new URLSearchParams(window.location.search);
+      return hash.get("type") === "recovery" || query.get("type") === "recovery" || query.has("code");
     }
 
-    let recoveryMode = isRecoveryUrl();
+    let recoveryMode = hasRecoveryParameters();
     let recoveryCompleted = false;
+    let currentUser = null;
+    let materialsCache = [];
 
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY,
-      {
-        auth: {
-          flowType: "implicit",
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
-        }
-      }
-    );
-
-    const loginScreen = document.getElementById("loginScreen");
-    const forgotScreen = document.getElementById("forgotScreen");
-    const resetScreen = document.getElementById("resetScreen");
-    const appScreen = document.getElementById("appScreen");
-
-    const loginForm = document.getElementById("loginForm");
-    const forgotForm = document.getElementById("forgotForm");
-    const resetForm = document.getElementById("resetForm");
-
-    const loginButton = document.getElementById("loginButton");
-    const forgotButton = document.getElementById("forgotButton");
-    const sendRecoveryButton = document.getElementById("sendRecoveryButton");
-    const savePasswordButton = document.getElementById("savePasswordButton");
-    const logoutButton = document.getElementById("logoutButton");
-
-    const backFromForgot = document.getElementById("backFromForgot");
-    const backFromReset = document.getElementById("backFromReset");
-
-    const loginMessage = document.getElementById("loginMessage");
-    const forgotMessage = document.getElementById("forgotMessage");
-    const resetMessage = document.getElementById("resetMessage");
-
-    const userEmail = document.getElementById("userEmail");
-
-    function hideAllScreens() {
-      loginScreen.classList.add("hidden");
-      forgotScreen.classList.add("hidden");
-      resetScreen.classList.add("hidden");
-      appScreen.classList.add("hidden");
-    }
-
-    function setMessage(element, text, type = "info") {
-      element.textContent = text;
-      element.className = "message " + type;
-    }
-
-    function clearMessage(element) {
-      element.textContent = "";
-      element.className = "message";
-    }
-
-    function showLogin() {
-      hideAllScreens();
-      loginScreen.classList.remove("hidden");
-    }
-
-    function showForgot() {
-      hideAllScreens();
-      forgotScreen.classList.remove("hidden");
-
-      const currentEmail = document.getElementById("loginEmail").value.trim();
-
-      if (currentEmail) {
-        document.getElementById("forgotEmail").value = currentEmail;
-      }
-
-      clearMessage(forgotMessage);
-    }
-
-    function showReset() {
-      hideAllScreens();
-      resetScreen.classList.remove("hidden");
-    }
-
-    function showApp(user) {
-      if (recoveryMode && !recoveryCompleted) {
-        showReset();
-        return;
-      }
-
-      hideAllScreens();
-      appScreen.classList.remove("hidden");
-
-      userEmail.textContent = user && user.email
-        ? "Usuário conectado: " + user.email
-        : "Usuário conectado";
-    }
-
-    function cleanRecoveryUrl() {
-      try {
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
-      } catch (error) {
-        console.warn("Não foi possível limpar a URL:", error);
-      }
-    }
-
-    /*
-      LOGIN
-    */
-    loginForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      clearMessage(loginMessage);
-
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value;
-
-      if (!email || !password) {
-        setMessage(loginMessage, "Preencha o e-mail e a senha.", "error");
-        return;
-      }
-
-      loginButton.disabled = true;
-      loginButton.textContent = "Entrando...";
-
-      try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        });
-
-        if (error) {
-          setMessage(
-            loginMessage,
-            "Não foi possível entrar. Confira o e-mail e a senha.",
-            "error"
-          );
-          console.error("Erro no login:", error.message);
-          return;
-        }
-
-        recoveryMode = false;
-        recoveryCompleted = false;
-        showApp(data.user);
-
-      } catch (error) {
-        console.error(error);
-        setMessage(
-          loginMessage,
-          "Ocorreu um erro de conexão. Tente novamente.",
-          "error"
-        );
-      } finally {
-        loginButton.disabled = false;
-        loginButton.textContent = "Entrar";
-      }
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: { flowType:"implicit", persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
     });
 
-    /*
-      ABRIR TELA DE RECUPERAÇÃO
-    */
-    forgotButton.addEventListener("click", showForgot);
+    const $ = (id) => document.getElementById(id);
+    const fmtMoney = (value) => new Intl.NumberFormat("pt-BR", {style:"currency", currency:"BRL"}).format(Number(value || 0));
+    const fmtQty = (value) => new Intl.NumberFormat("pt-BR", {maximumFractionDigits:4}).format(Number(value || 0));
+    const todayLocal = () => { const d = new Date(); const local = new Date(d.getTime()-d.getTimezoneOffset()*60000); return local.toISOString().slice(0,10); };
+    const escapeHtml = (v) => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 
-    backFromForgot.addEventListener("click", showLogin);
+    function clearMsg(el){ el.textContent=""; el.className="message"; }
+    function message(el,text,type="info"){ el.textContent=text; el.className="message "+type; }
+    function hideAllScreens(){ ["loginScreen","forgotScreen","resetScreen","appScreen"].forEach(id=>$(id).classList.add("hidden")); }
+    function showLogin(){ hideAllScreens(); $("loginScreen").classList.remove("hidden"); }
+    function showForgot(){ hideAllScreens(); $("forgotScreen").classList.remove("hidden"); const email=$("loginEmail").value.trim(); if(email) $("forgotEmail").value=email; clearMsg($("forgotMessage")); }
+    function showReset(){ hideAllScreens(); $("resetScreen").classList.remove("hidden"); }
+    function showApp(user){ if(recoveryMode&&!recoveryCompleted){showReset();return;} hideAllScreens(); $("appScreen").classList.remove("hidden"); $("userEmail").textContent="Usuário conectado: "+(user?.email||""); switchView("dashboardView"); }
+    function clearRecoveryUrl(){ try{window.history.replaceState({},document.title,window.location.pathname);}catch(e){console.warn(e);} }
 
-    /*
-      SOLICITAR E-MAIL DE RECUPERAÇÃO
-    */
-    forgotForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      clearMessage(forgotMessage);
+    function switchView(viewId){
+      ["dashboardView","materialsView"].forEach(id=>$(id).classList.toggle("hidden",id!==viewId));
+      document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.view===viewId));
+      if(viewId==="materialsView") loadMaterials();
+    }
+    document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.addEventListener("click",()=>switchView(btn.dataset.view)));
 
-      const email = document.getElementById("forgotEmail").value.trim();
+    $("loginForm").addEventListener("submit",async e=>{
+      e.preventDefault(); clearMsg($("loginMessage"));
+      const email=$("loginEmail").value.trim(), password=$("loginPassword").value;
+      $("loginButton").disabled=true; $("loginButton").textContent="Entrando...";
+      try{
+        const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+        if(error){message($("loginMessage"),"Não foi possível entrar. Confira o e-mail e a senha.","error");console.error("Login:",error.message);return;}
+        recoveryMode=false;recoveryCompleted=false;currentUser=data.user;showApp(data.user);
+      }catch(err){console.error(err);message($("loginMessage"),"Falha de conexão. Tente novamente.","error");}
+      finally{$("loginButton").disabled=false;$("loginButton").textContent="Entrar";}
+    });
+    $("forgotButton").addEventListener("click",showForgot);
+    $("backFromForgot").addEventListener("click",showLogin);
+    $("forgotForm").addEventListener("submit",async e=>{
+      e.preventDefault();clearMsg($("forgotMessage"));const email=$("forgotEmail").value.trim();
+      $("sendRecoveryButton").disabled=true;$("sendRecoveryButton").textContent="Enviando...";
+      try{
+        const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:SITE_URL});
+        if(error){message($("forgotMessage"),error.message.toLowerCase().includes("rate limit")?"O limite de envio foi atingido. Aguarde antes de tentar novamente.":"Não foi possível enviar o e-mail. "+error.message,"error");return;}
+        message($("forgotMessage"),"Se o e-mail estiver cadastrado, você receberá um link. Verifique também a pasta de spam.","success");
+      }catch(err){console.error(err);message($("forgotMessage"),"Falha ao conectar ao serviço de e-mail.","error");}
+      finally{$("sendRecoveryButton").disabled=false;$("sendRecoveryButton").textContent="Enviar link de recuperação";}
+    });
+    $("resetForm").addEventListener("submit",async e=>{
+      e.preventDefault();clearMsg($("resetMessage"));const p=$("newPassword").value, c=$("confirmPassword").value;
+      if(p.length<8){message($("resetMessage"),"A senha precisa ter pelo menos 8 caracteres.","error");return;}
+      if(p!==c){message($("resetMessage"),"As senhas não são iguais.","error");return;}
+      $("savePasswordButton").disabled=true;$("savePasswordButton").textContent="Salvando...";
+      try{
+        const {data:sd,error:se}=await supabaseClient.auth.getSession();
+        if(se||!sd.session){message($("resetMessage"),"O link expirou ou já foi utilizado. Solicite um novo link.","error");return;}
+        const {error}=await supabaseClient.auth.updateUser({password:p});
+        if(error){message($("resetMessage"),"Não foi possível alterar a senha: "+error.message,"error");return;}
+        recoveryCompleted=true;recoveryMode=false;await supabaseClient.auth.signOut();clearRecoveryUrl();
+        $("loginPassword").value="";$("newPassword").value="";$("confirmPassword").value="";showLogin();message($("loginMessage"),"Senha alterada com sucesso. Entre usando sua nova senha.","success");
+      }catch(err){console.error(err);message($("resetMessage"),"Ocorreu um erro ao salvar a senha.","error");}
+      finally{$("savePasswordButton").disabled=false;$("savePasswordButton").textContent="Salvar nova senha";}
+    });
+    $("backFromReset").addEventListener("click",async()=>{recoveryMode=false;recoveryCompleted=true;await supabaseClient.auth.signOut();clearRecoveryUrl();showLogin();});
+    $("logoutButton").addEventListener("click",async()=>{recoveryMode=false;recoveryCompleted=false;currentUser=null;await supabaseClient.auth.signOut();showLogin();});
 
-      if (!email) {
-        setMessage(forgotMessage, "Informe seu e-mail.", "error");
-        return;
-      }
+    function materialTypeLabel(value){return ({paper:"Papel",ink:"Tinta",filament:"Filamento 3D",adhesive:"Adesivo/vinil",cutting:"Lâmina/base de corte",packaging:"Embalagem",other:"Outro"})[value]||value||"—";}
+    function unitLabel(value){return ({un:"un",g:"g",kg:"kg",ml:"ml",l:"l",cm:"cm",m:"m",folha:"folha",outro:"unidade"})[value]||value||"un";}
+    function filteredMaterials(){const q=$("materialSearch").value.trim().toLowerCase();return materialsCache.filter(m=>[m.name,m.material_type,m.brand,m.color,m.finish,m.size_description,m.supplier,m.sku].some(v=>String(v||"").toLowerCase().includes(q)));}
 
-      sendRecoveryButton.disabled = true;
-      sendRecoveryButton.textContent = "Enviando...";
+    async function loadMaterials(){
+      if(!currentUser)return;
+      $("materialsStatus").textContent="Carregando materiais...";
+      try{
+        const {data,error}=await supabaseClient.from("materials").select("id,name,description,category,unit,cost_per_unit,stock_quantity,minimum_stock,active,brand,material_type,color,finish,size_description,grammage_gsm,width_mm,height_mm,purchase_unit,base_unit,quantity_per_purchase_unit,supplier,sku,notes,created_at,updated_at").eq("active",true).order("name");
+        if(error)throw error;
+        materialsCache=data||[];renderMaterials();populatePurchaseMaterialSelect();
+        $("materialsStatus").textContent=materialsCache.length+" material(is) cadastrado(s).";
+        await loadPurchaseHistory();
+      }catch(err){console.error("Load materials:",err);$("materialsStatus").textContent="Não foi possível carregar os materiais: "+(err.message||"erro de conexão");message($("materialsFeedback"),"Verifique se as permissões e as políticas de segurança da tabela materials estão configuradas.","error");}
+    }
 
-      try {
-        const { error } =
-          await supabaseClient.auth.resetPasswordForEmail(email, {
-            redirectTo: SITE_URL
-          });
+    function renderMaterials(){
+      const list=filteredMaterials(), body=$("materialsTableBody");
+      if(!list.length){body.innerHTML='<tr><td colspan="6" class="empty">Nenhum material encontrado. Clique em “Novo material” para cadastrar o primeiro.</td></tr>';return;}
+      body.innerHTML=list.map(m=>{
+        const unit=m.base_unit||m.unit||"un";const stock=Number(m.stock_quantity||0), min=Number(m.minimum_stock||0);const low=min>0&&stock<=min;
+        return `<tr>
+          <td><strong>${escapeHtml(m.name)}</strong><span class="sub">${escapeHtml(m.size_description||"")}${m.grammage_gsm?" • "+escapeHtml(m.grammage_gsm)+" g/m²":""}</span></td>
+          <td>${escapeHtml(materialTypeLabel(m.material_type||m.category))}<span class="sub">${escapeHtml(m.brand||"Sem marca")}</span></td>
+          <td>${escapeHtml(m.color||"—")}<span class="sub">${escapeHtml(m.finish||"")}</span></td>
+          <td>${fmtMoney(m.cost_per_unit)} <span class="sub">por ${escapeHtml(unitLabel(unit))}</span></td>
+          <td><span class="${low?"stock-low":"stock-ok"}">${fmtQty(stock)} ${escapeHtml(unitLabel(unit))}</span>${min>0?'<span class="sub">Mínimo: '+fmtQty(min)+'</span>':""}</td>
+          <td><button class="btn btn-outline" data-purchase="${escapeHtml(m.id)}" type="button">Registrar compra</button><button class="btn btn-danger" data-disable="${escapeHtml(m.id)}" type="button" style="margin-top:6px">Desativar</button></td>
+        </tr>`;
+      }).join("");
+      body.querySelectorAll("button[data-purchase]").forEach(btn=>btn.addEventListener("click",()=>openPurchasePanel(btn.dataset.purchase)));
+      body.querySelectorAll("button[data-disable]").forEach(btn=>btn.addEventListener("click",()=>deactivateMaterial(btn.dataset.disable)));
+    }
 
-        if (error) {
-          console.error("Erro de recuperação:", error.message);
+    function populatePurchaseMaterialSelect(selectedId=""){
+      const select=$("purchaseMaterial");
+      if(!materialsCache.length){select.innerHTML='<option value="">Cadastre um material primeiro</option>';return;}
+      select.innerHTML='<option value="">Selecione um material</option>'+materialsCache.map(m=>`<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}${m.color?" • "+escapeHtml(m.color):""}</option>`).join("");
+      if(selectedId)select.value=selectedId;
+      fillPurchaseDefaults();
+    }
+    function fillPurchaseDefaults(){
+      const m=materialsCache.find(x=>x.id===$("purchaseMaterial").value);if(!m)return;
+      $("purchaseContent").value=m.quantity_per_purchase_unit||1;
+      $("purchaseUnitName").value=m.purchase_unit||"un";
+      $("purchaseSupplier").value=m.supplier||"";
+    }
+    $("purchaseMaterial").addEventListener("change",fillPurchaseDefaults);
 
-          setMessage(
-            forgotMessage,
-            error.message.includes("rate limit")
-              ? "O limite de envio de e-mails foi atingido. Aguarde antes de tentar novamente."
-              : "Não foi possível enviar o e-mail. Verifique a configuração de autenticação e tente novamente.",
-            "error"
-          );
+    function openPurchasePanel(id){
+      if(!materialsCache.length){message($("materialsFeedback"),"Cadastre um material antes de registrar uma compra.","info");return;}
+      $("newMaterialPanel").classList.add("hidden");$("purchasePanel").classList.remove("hidden");clearMsg($("purchaseFeedback"));
+      $("purchaseDate").value=todayLocal();$("purchaseQuantity").value="1";$("purchaseTotalCost").value="";$("purchaseNotes").value="";
+      populatePurchaseMaterialSelect(id||"");$("purchasePanel").scrollIntoView({behavior:"smooth",block:"start"});
+    }
 
-          return;
+    async function recordPurchase(material, formData){
+      const purchaseQty=Number(formData.purchaseQty), content=Number(formData.content), totalCost=Number(formData.totalCost);
+      if(!(purchaseQty>0)||!(content>0)||!Number.isFinite(totalCost)||totalCost<0)throw new Error("Confira quantidade, conteúdo por pacote e valor pago.");
+      const baseQty=purchaseQty*content;if(!(baseQty>0))throw new Error("A quantidade total precisa ser maior que zero.");
+      const date=formData.date||todayLocal();const supplier=(formData.supplier||"").trim();
+      const {data:purchase,error:purchaseError}=await supabaseClient.from("material_purchases").insert({
+        material_id:material.id,purchase_date:date,supplier:supplier||null,purchase_quantity:purchaseQty,purchase_unit:formData.purchaseUnit,
+        quantity_per_purchase_unit:content,total_base_quantity:baseQty,total_cost:totalCost,notes:formData.notes||null
+      }).select("id").single();
+      if(purchaseError)throw new Error("A compra não foi registrada: "+purchaseError.message);
+      const oldStock=Number(material.stock_quantity||0), oldCost=Number(material.cost_per_unit||0), newStock=oldStock+baseQty;
+      const newUnitCost=newStock>0?((oldStock*oldCost)+totalCost)/newStock:0;
+      const {error:updateError}=await supabaseClient.from("materials").update({
+        stock_quantity:newStock,cost_per_unit:newUnitCost,purchase_unit:formData.purchaseUnit,base_unit:material.base_unit||material.unit,
+        quantity_per_purchase_unit:content,supplier:supplier||material.supplier||null,updated_at:new Date().toISOString()
+      }).eq("id",material.id);
+      if(updateError)throw new Error("A compra foi registrada, mas não foi possível atualizar o estoque/custo: "+updateError.message);
+      const {error:movementError}=await supabaseClient.from("inventory_movements").insert({
+        material_id:material.id,purchase_id:purchase.id,movement_type:"purchase",quantity_change:baseQty,movement_date:new Date(date+"T12:00:00").toISOString(),notes:formData.notes||"Entrada de compra"
+      });
+      if(movementError)throw new Error("Compra e estoque atualizados, mas o histórico de movimentação falhou: "+movementError.message);
+      return {baseQty,newStock,newUnitCost};
+    }
+
+    $("newMaterialButton").addEventListener("click",()=>{
+      $("purchasePanel").classList.add("hidden");$("newMaterialPanel").classList.remove("hidden");clearMsg($("materialsFeedback"));
+      $("matPurchaseDate").value=todayLocal();$("newMaterialPanel").scrollIntoView({behavior:"smooth",block:"start"});
+    });
+    $("cancelNewMaterialButton").addEventListener("click",()=>$("newMaterialPanel").classList.add("hidden"));
+    $("cancelPurchaseButton").addEventListener("click",()=>$("purchasePanel").classList.add("hidden"));
+    $("refreshMaterialsButton").addEventListener("click",loadMaterials);
+    $("refreshPurchasesButton").addEventListener("click",loadPurchaseHistory);
+    $("materialSearch").addEventListener("input",renderMaterials);
+
+    $("newMaterialForm").addEventListener("submit",async e=>{
+      e.preventDefault();clearMsg($("materialsFeedback"));
+      const button=$("saveNewMaterialButton");button.disabled=true;button.textContent="Salvando...";
+      const baseUnit=$("baseUnit").value,purchaseUnit=$("purchaseUnit").value.trim(),content=Number($("contentPerPack").value),packs=Number($("initialPurchaseQty").value),cost=Number($("initialPurchaseCost").value);
+      if(!(content>0)||!(packs>0)||!Number.isFinite(cost)||cost<0){message($("materialsFeedback"),"Confira a quantidade por pacote, a quantidade comprada e o valor total.","error");button.disabled=false;button.textContent="Salvar material e compra";return;}
+      const materialPayload={
+        name:$("matName").value.trim(),material_type:$("matType").value,category:$("matType").value,brand:$("matBrand").value.trim()||null,color:$("matColor").value.trim()||null,finish:$("matFinish").value.trim()||null,
+        size_description:$("matSize").value.trim()||null,grammage_gsm:$("matGrammage").value?Number($("matGrammage").value):null,width_mm:$("matWidth").value?Number($("matWidth").value):null,height_mm:$("matHeight").value?Number($("matHeight").value):null,
+        unit:baseUnit,base_unit:baseUnit,purchase_unit:purchaseUnit,quantity_per_purchase_unit:content,cost_per_unit:0,stock_quantity:0,minimum_stock:Number($("matMinimumStock").value||0),supplier:$("matSupplier").value.trim()||null,sku:$("matSku").value.trim()||null,notes:$("matNotes").value.trim()||null,active:true
+      };
+      try{
+        const {data:material,error}=await supabaseClient.from("materials").insert(materialPayload).select("*").single();
+        if(error)throw new Error("Não foi possível cadastrar o material: "+error.message);
+        try{
+          await recordPurchase(material,{purchaseQty:packs,content,totalCost:cost,purchaseUnit,date:$("matPurchaseDate").value,supplier:$("matSupplier").value.trim(),notes:"Compra inicial. "+$("matNotes").value.trim()});
+        }catch(purchaseErr){
+          message($("materialsFeedback"),"O material foi cadastrado, mas a compra inicial precisa ser conferida: "+purchaseErr.message,"error");
+          $("newMaterialPanel").classList.add("hidden");await loadMaterials();return;
         }
-
-        setMessage(
-          forgotMessage,
-          "Se esse e-mail estiver cadastrado, você receberá um link de recuperação. Verifique também o spam.",
-          "success"
-        );
-
-      } catch (error) {
-        console.error(error);
-
-        setMessage(
-          forgotMessage,
-          "Não foi possível conectar ao serviço de e-mail.",
-          "error"
-        );
-
-      } finally {
-        sendRecoveryButton.disabled = false;
-        sendRecoveryButton.textContent = "Enviar link de recuperação";
-      }
+        $("newMaterialForm").reset();$("matPurchaseDate").value=todayLocal();$("contentPerPack").value="1";$("initialPurchaseQty").value="1";$("initialPurchaseCost").value="0";$("matMinimumStock").value="0";
+        $("newMaterialPanel").classList.add("hidden");message($("materialsFeedback"),"Material e primeira compra registrados com sucesso.","success");await loadMaterials();
+      }catch(err){console.error(err);message($("materialsFeedback"),err.message||"Não foi possível salvar o material.","error");}
+      finally{button.disabled=false;button.textContent="Salvar material e compra";}
     });
 
-    /*
-      DEFINIR NOVA SENHA
-    */
-    resetForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      clearMessage(resetMessage);
-
-      const newPassword = document.getElementById("newPassword").value;
-      const confirmPassword = document.getElementById("confirmPassword").value;
-
-      if (newPassword.length < 8) {
-        setMessage(
-          resetMessage,
-          "A nova senha precisa ter pelo menos 8 caracteres.",
-          "error"
-        );
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        setMessage(resetMessage, "As senhas não são iguais.", "error");
-        return;
-      }
-
-      savePasswordButton.disabled = true;
-      savePasswordButton.textContent = "Salvando...";
-
-      try {
-        /*
-          A SDK precisa reconhecer a sessão temporária criada pelo
-          link de recuperação antes de permitir a alteração da senha.
-        */
-        const { data: sessionData, error: sessionError } =
-          await supabaseClient.auth.getSession();
-
-        if (sessionError || !sessionData.session) {
-          setMessage(
-            resetMessage,
-            "O link de recuperação expirou ou já foi utilizado. Solicite um novo link.",
-            "error"
-          );
-          return;
-        }
-
-        const { error } = await supabaseClient.auth.updateUser({
-          password: newPassword
-        });
-
-        if (error) {
-          console.error("Erro ao atualizar senha:", error.message);
-
-          setMessage(
-            resetMessage,
-            "Não foi possível alterar a senha. Verifique se o link ainda é válido e tente novamente.",
-            "error"
-          );
-          return;
-        }
-
-        /*
-          A senha foi alterada. Saímos da sessão de recuperação para
-          que o evento de atualização não volte a abrir essa tela.
-        */
-        recoveryCompleted = true;
-        recoveryMode = false;
-
-        await supabaseClient.auth.signOut();
-        cleanRecoveryUrl();
-
-        document.getElementById("loginPassword").value = "";
-        document.getElementById("newPassword").value = "";
-        document.getElementById("confirmPassword").value = "";
-
-        showLogin();
-
-        setMessage(
-          loginMessage,
-          "Senha alterada com sucesso! Entre com sua nova senha.",
-          "success"
-        );
-
-      } catch (error) {
-        console.error(error);
-
-        setMessage(
-          resetMessage,
-          "Ocorreu um erro ao salvar a senha. Tente novamente.",
-          "error"
-        );
-
-      } finally {
-        savePasswordButton.disabled = false;
-        savePasswordButton.textContent = "Salvar nova senha";
-      }
+    $("purchaseForm").addEventListener("submit",async e=>{
+      e.preventDefault();clearMsg($("purchaseFeedback"));const button=$("savePurchaseButton");button.disabled=true;button.textContent="Registrando...";
+      try{
+        const material=materialsCache.find(m=>m.id===$("purchaseMaterial").value);if(!material)throw new Error("Selecione um material válido.");
+        const result=await recordPurchase(material,{purchaseQty:Number($("purchaseQuantity").value),content:Number($("purchaseContent").value),totalCost:Number($("purchaseTotalCost").value),purchaseUnit:$("purchaseUnitName").value.trim(),date:$("purchaseDate").value,supplier:$("purchaseSupplier").value.trim(),notes:$("purchaseNotes").value.trim()});
+        message($("materialsFeedback"),"Compra registrada. Entrada: "+fmtQty(result.baseQty)+" "+unitLabel(material.base_unit||material.unit)+"; novo estoque: "+fmtQty(result.newStock)+"; custo médio: "+fmtMoney(result.newUnitCost)+" por unidade-base.","success");
+        $("purchasePanel").classList.add("hidden");$("purchaseForm").reset();await loadMaterials();
+      }catch(err){console.error(err);message($("purchaseFeedback"),err.message||"Não foi possível registrar a compra.","error");}
+      finally{button.disabled=false;button.textContent="Registrar compra";}
     });
 
-    /*
-      SAIR DA TELA DE RECUPERAÇÃO
-    */
-    backFromReset.addEventListener("click", async () => {
-      recoveryMode = false;
-      recoveryCompleted = true;
+    async function loadPurchaseHistory(){
+      if(!currentUser)return;
+      const body=$("purchasesTableBody");body.innerHTML='<tr><td colspan="6" class="empty">Carregando histórico...</td></tr>';
+      try{
+        const {data,error}=await supabaseClient.from("material_purchases").select("id,purchase_date,supplier,purchase_quantity,purchase_unit,quantity_per_purchase_unit,total_base_quantity,total_cost,materials(name,base_unit,unit)").order("purchase_date",{ascending:false}).limit(50);
+        if(error)throw error;
+        if(!data||!data.length){body.innerHTML='<tr><td colspan="6" class="empty">Nenhuma compra registrada ainda.</td></tr>';return;}
+        body.innerHTML=data.map(p=>{const m=p.materials||{};const unit=m.base_unit||m.unit||"un";const unitCost=Number(p.total_base_quantity)>0?Number(p.total_cost)/Number(p.total_base_quantity):0;return `<tr><td>${escapeHtml(p.purchase_date||"—")}</td><td><strong>${escapeHtml(m.name||"Material")}</strong></td><td>${escapeHtml(p.supplier||"—")}</td><td>${fmtQty(p.purchase_quantity)} ${escapeHtml(p.purchase_unit||"")}<span class="sub">Total: ${fmtQty(p.total_base_quantity)} ${escapeHtml(unitLabel(unit))}</span></td><td>${fmtMoney(p.total_cost)}</td><td>${fmtMoney(unitCost)} / ${escapeHtml(unitLabel(unit))}</td></tr>`;}).join("");
+      }catch(err){console.error("Purchase history:",err);body.innerHTML='<tr><td colspan="6" class="empty">Não foi possível carregar o histórico de compras.</td></tr>';}
+    }
 
-      await supabaseClient.auth.signOut();
-      cleanRecoveryUrl();
+    async function deactivateMaterial(id){
+      const material=materialsCache.find(m=>m.id===id);if(!material)return;
+      if(!confirm(`Desativar “${material.name}”? O material deixará de aparecer na lista ativa, mas seu histórico será preservado.`))return;
+      const {error}=await supabaseClient.from("materials").update({active:false,updated_at:new Date().toISOString()}).eq("id",id);
+      if(error){message($("materialsFeedback"),"Não foi possível desativar: "+error.message,"error");return;}
+      message($("materialsFeedback"),"Material desativado. O histórico foi preservado.","success");await loadMaterials();
+    }
+
+    supabaseClient.auth.onAuthStateChange((event,session)=>{
+      if(event==="PASSWORD_RECOVERY"){recoveryMode=true;recoveryCompleted=false;showReset();return;}
+      if(recoveryMode&&!recoveryCompleted){showReset();return;}
+      if(event==="SIGNED_OUT"){currentUser=null;showLogin();return;}
+      if(session?.user){currentUser=session.user;showApp(session.user);loadMaterials();return;}
       showLogin();
     });
 
-    /*
-      SAIR DO SISTEMA
-    */
-    logoutButton.addEventListener("click", async () => {
-      recoveryMode = false;
-      recoveryCompleted = false;
-
-      await supabaseClient.auth.signOut();
-      showLogin();
-    });
-
-    /*
-      ESTADO DE AUTENTICAÇÃO
-
-      A verificação de recoveryMode vem antes da abertura do painel.
-      Assim, eventos de sessão não substituem a tela de nova senha.
-    */
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY") {
-        recoveryMode = true;
-        recoveryCompleted = false;
-        showReset();
-        return;
-      }
-
-      if (recoveryMode && !recoveryCompleted) {
-        showReset();
-        return;
-      }
-
-      if (event === "SIGNED_OUT") {
-        showLogin();
-        return;
-      }
-
-      if (session && session.user) {
-        showApp(session.user);
-        return;
-      }
-
-      showLogin();
-    });
-
-    /*
-      INICIALIZAÇÃO
-
-      Se a URL veio do link de recuperação, preserva-se a tela
-      de nova senha enquanto a SDK restaura a sessão temporária.
-    */
-    async function initialize() {
-      if (recoveryMode) {
-        showReset();
-      } else {
-        showLogin();
-      }
-
-      try {
-        const { data, error } = await supabaseClient.auth.getSession();
-
-        if (recoveryMode) {
-          showReset();
-
-          if (error || !data.session) {
-            setMessage(
-              resetMessage,
-              "Não foi possível validar o link. Ele pode ter expirado ou já ter sido utilizado. Solicite uma nova recuperação.",
-              "error"
-            );
-          }
-
-          return;
-        }
-
-        if (error) {
-          showLogin();
-          return;
-        }
-
-        if (data.session && data.session.user) {
-          showApp(data.session.user);
-        } else {
-          showLogin();
-        }
-
-      } catch (error) {
-        console.error("Erro ao iniciar o sistema:", error);
-        showLogin();
-      }
+    async function initialize(){
+      if(recoveryMode)showReset();else showLogin();
+      try{
+        const {data,error}=await supabaseClient.auth.getSession();
+        if(recoveryMode){showReset();if(error||!data.session)message($("resetMessage"),"O link de recuperação pode ter expirado. Solicite um novo link caso não consiga continuar.","error");return;}
+        if(error){showLogin();return;}
+        if(data.session?.user){currentUser=data.session.user;showApp(data.session.user);await loadMaterials();}else showLogin();
+      }catch(err){console.error(err);showLogin();}
     }
-
-    initialize();
+    $("matPurchaseDate").value=todayLocal();$("purchaseDate").value=todayLocal();initialize();
   </script>
-
 </body>
 </html>
