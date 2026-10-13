@@ -193,7 +193,7 @@
           <div><h2>Precificação de produtos</h2><p>Calcule custos e preço sugerido usando seus materiais e equipamentos cadastrados.</p></div>
         </div>
         <div id="pricingFeedback" class="message" role="status" aria-live="polite"></div>
-        <div class="pricing-note"><strong>Como funciona:</strong> a calculadora soma materiais, desperdício informado, tempo de máquina, mão de obra e outros custos. O preço sugerido usa a margem desejada sobre o preço de venda (não é markup). Para calcular corretamente, cadastre os materiais e equipamentos e informe seu valor de hora de trabalho. Os cálculos são estimativas com base nos dados cadastrados.</div>
+        <div class="pricing-note"><strong>Como funciona:</strong> informe a quantidade produzida no lote e registre abaixo o consumo TOTAL do lote, conforme aparece no Bambu Studio ou em outro equipamento. O sistema divide os materiais, o tempo de máquina, a mão de obra e os outros custos pela quantidade produzida, mostrando custo e preço sugerido POR UNIDADE. Para um produto unitário, deixe a quantidade do lote como 1. O preço sugerido usa a margem desejada sobre o preço de venda (não é markup). Os cálculos são estimativas com base nos dados cadastrados.</div>
 
         <form id="pricingForm">
           <section class="panel">
@@ -202,18 +202,19 @@
               <div class="field"><label for="priceProductName">Nome do produto *</label><input id="priceProductName" required placeholder="Ex.: Chaveiro personalizado"></div>
               <div class="field"><label for="priceProductType">Tipo</label><select id="priceProductType"><option value="product">Produto físico</option><option value="service">Serviço</option></select></div>
               <div class="field"><label for="priceProductCategory">Categoria</label><input id="priceProductCategory" placeholder="Ex.: Impressão 3D, papelaria"></div>
+              <div class="field"><label for="priceBatchQuantity">Quantidade produzida no lote *</label><input id="priceBatchQuantity" type="number" min="1" step="1" value="1" required><span class="sub">Quantas unidades saíram desta produção?</span></div>
               <div class="field span-3"><label for="priceProductDescription">Descrição / observações</label><textarea id="priceProductDescription" placeholder="Detalhes, personalização ou acabamento"></textarea></div>
             </div>
           </section>
 
           <section class="panel">
-            <div class="section-head"><div><h3 style="margin-bottom:0">2. Materiais utilizados</h3><p>Selecione cada material e informe a quantidade por unidade produzida.</p></div><button class="btn btn-outline" type="button" id="addPricingMaterialButton">+ Adicionar material</button></div>
+            <div class="section-head"><div><h3 style="margin-bottom:0">2. Materiais utilizados</h3><p>Informe a quantidade TOTAL consumida no lote inteiro. Ex.: 6,04 g de PLA branco para 7 peças.</p></div><button class="btn btn-outline" type="button" id="addPricingMaterialButton">+ Adicionar material</button></div>
             <div id="pricingMaterialsList"></div>
             <div id="pricingMaterialsEmpty" class="empty">Nenhum material adicionado. Clique em “Adicionar material”.</div>
           </section>
 
           <section class="panel">
-            <div class="section-head"><div><h3 style="margin-bottom:0">3. Equipamentos utilizados</h3><p>Informe os minutos de uso por unidade. A preparação pode ser distribuída no tempo de cada unidade.</p></div><button class="btn btn-outline" type="button" id="addPricingMachineButton">+ Adicionar equipamento</button></div>
+            <div class="section-head"><div><h3 style="margin-bottom:0">3. Equipamentos utilizados</h3><p>Informe o tempo TOTAL usado para produzir o lote. Ex.: 68 minutos para 7 peças.</p></div><button class="btn btn-outline" type="button" id="addPricingMachineButton">+ Adicionar equipamento</button></div>
             <div id="pricingMachinesList"></div>
             <div id="pricingMachinesEmpty" class="empty">Nenhum equipamento adicionado. Clique em “Adicionar equipamento”.</div>
           </section>
@@ -221,22 +222,25 @@
           <section class="panel">
             <h3>4. Mão de obra e outros custos</h3>
             <div class="form-grid">
-              <div class="field"><label for="priceLaborMinutes">Seu tempo de trabalho por unidade (minutos)</label><input id="priceLaborMinutes" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="priceLaborMinutes">Seu tempo de trabalho TOTAL no lote (minutos)</label><input id="priceLaborMinutes" type="number" min="0" step="1" value="0"><span class="sub">Inclua preparação, acabamento e embalagem de todas as unidades.</span></div>
               <div class="field"><label for="priceHourlyRate">Valor da sua hora de trabalho (R$)</label><input id="priceHourlyRate" type="number" min="0" step="0.01" value="0"><span class="sub">Defina quanto deseja receber pela sua hora de trabalho.</span></div>
-              <div class="field"><label for="priceOtherCosts">Outros custos por unidade (R$)</label><input id="priceOtherCosts" type="number" min="0" step="0.01" value="0"><span class="sub">Ex.: taxa, acabamento ou despesas ainda não cadastradas como material.</span></div>
+              <div class="field"><label for="priceOtherCosts">Outros custos TOTAL do lote (R$)</label><input id="priceOtherCosts" type="number" min="0" step="0.01" value="0"><span class="sub">Ex.: taxa ou custos do lote que ainda não foram cadastrados como material.</span></div>
               <div class="field"><label for="priceWastePercent">Desperdício de materiais (%)</label><input id="priceWastePercent" type="number" min="0" max="100" step="0.1" value="5"></div>
               <div class="field"><label for="priceMarginPercent">Margem de lucro desejada (%)</label><input id="priceMarginPercent" type="number" min="0" max="99" step="0.1" value="50"><span class="sub">A margem precisa ser menor que 100%.</span></div>
             </div>
             <div class="form-actions"><button class="btn btn-outline" type="button" id="recalculatePriceButton">Recalcular preço</button><button class="btn btn-primary" type="submit" id="savePricedProductButton">Salvar produto e ficha técnica</button></div>
             <div id="pricingCalculationMessage" class="message" role="status" aria-live="polite"></div>
             <div class="pricing-results">
-              <div class="pricing-result"><span>Custo de materiais + desperdício</span><strong id="resultMaterialsCost">R$ 0,00</strong></div>
-              <div class="pricing-result"><span>Custo dos equipamentos</span><strong id="resultMachinesCost">R$ 0,00</strong></div>
-              <div class="pricing-result"><span>Custo da mão de obra</span><strong id="resultLaborCost">R$ 0,00</strong></div>
-              <div class="pricing-result"><span>Outros custos</span><strong id="resultOtherCost">R$ 0,00</strong></div>
-              <div class="pricing-result"><span><strong>CUSTO TOTAL</strong></span><strong id="resultTotalCost">R$ 0,00</strong></div>
-              <div class="pricing-result"><span>PREÇO DE VENDA SUGERIDO</span><strong id="resultSalePrice">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Materiais + desperdício (por unidade)</span><strong id="resultMaterialsCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Equipamentos (por unidade)</span><strong id="resultMachinesCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Mão de obra (por unidade)</span><strong id="resultLaborCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Outros custos (por unidade)</span><strong id="resultOtherCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span><strong>CUSTO TOTAL POR UNIDADE</strong></span><strong id="resultTotalCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>PREÇO SUGERIDO POR UNIDADE</span><strong id="resultSalePrice">R$ 0,00</strong></div>
               <div class="pricing-result"><span>Lucro estimado por unidade</span><strong id="resultProfit">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Custo total do lote</span><strong id="resultBatchTotalCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Preço sugerido para o lote completo</span><strong id="resultBatchSalePrice">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Lucro estimado no lote</span><strong id="resultBatchProfit">R$ 0,00</strong></div>
             </div>
           </section>
         </form>
@@ -681,7 +685,7 @@
     function addPricingMaterialLine(selectedId="", quantity="1"){
       const row=document.createElement("div");
       row.className="pricing-line pricing-material-line";
-      row.innerHTML=`<div class="form-grid"><div class="field span-2"><label>Material</label><select class="pricing-material-select">${materialOptionsHtml(selectedId)}</select></div><div class="field"><label>Quantidade por unidade</label><input class="pricing-material-qty" type="number" min="0" step="0.0001" value="${escapeHtml(quantity)}"><span class="sub pricing-material-unit">Selecione o material.</span></div></div><div class="form-actions"><button class="btn btn-danger remove-pricing-line" type="button">Remover material</button></div>`;
+      row.innerHTML=`<div class="form-grid"><div class="field span-2"><label>Material</label><select class="pricing-material-select">${materialOptionsHtml(selectedId)}</select></div><div class="field"><label>Quantidade total no lote</label><input class="pricing-material-qty" type="number" min="0" step="0.0001" value="${escapeHtml(quantity)}"><span class="sub pricing-material-unit">Selecione o material.</span></div></div><div class="form-actions"><button class="btn btn-danger remove-pricing-line" type="button">Remover material</button></div>`;
       $("pricingMaterialsList").appendChild(row);
       const select=row.querySelector(".pricing-material-select");
       const qty=row.querySelector(".pricing-material-qty");
@@ -699,7 +703,7 @@
     function addPricingMachineLine(selectedId="", minutes="0", setup="0"){
       const row=document.createElement("div");
       row.className="pricing-line pricing-machine-line";
-      row.innerHTML=`<div class="form-grid"><div class="field span-2"><label>Equipamento</label><select class="pricing-machine-select">${machineOptionsHtml(selectedId)}</select></div><div class="field"><label>Minutos por unidade</label><input class="pricing-machine-minutes" type="number" min="0" step="0.1" value="${escapeHtml(minutes)}"></div><div class="field"><label>Preparação por unidade (min)</label><input class="pricing-machine-setup" type="number" min="0" step="0.1" value="${escapeHtml(setup)}"></div></div><div class="form-actions"><button class="btn btn-danger remove-pricing-line" type="button">Remover equipamento</button></div>`;
+      row.innerHTML=`<div class="form-grid"><div class="field span-2"><label>Equipamento</label><select class="pricing-machine-select">${machineOptionsHtml(selectedId)}</select></div><div class="field"><label>Minutos totais no lote</label><input class="pricing-machine-minutes" type="number" min="0" step="0.1" value="${escapeHtml(minutes)}"></div><div class="field"><label>Preparação total do lote (min)</label><input class="pricing-machine-setup" type="number" min="0" step="0.1" value="${escapeHtml(setup)}"></div></div><div class="form-actions"><button class="btn btn-danger remove-pricing-line" type="button">Remover equipamento</button></div>`;
       $("pricingMachinesList").appendChild(row);
       row.querySelector(".pricing-machine-select").addEventListener("change",recalculatePricing);
       row.querySelector(".pricing-machine-minutes").addEventListener("input",recalculatePricing);
@@ -730,21 +734,47 @@
 
     function calculatePricingValues(showValidation=false){
       const {materialLines,machineLines}=collectPricingLines();
-      const materialBase=materialLines.reduce((sum,x)=>sum+Number(x.material.cost_per_unit||0)*x.quantity,0);
+      const batchQuantity=Number($("priceBatchQuantity").value||1);
+      const safeBatchQuantity=batchQuantity>0?batchQuantity:1;
+
+      // Os campos dos materiais representam o consumo TOTAL do lote.
+      const materialBaseBatch=materialLines.reduce((sum,x)=>sum+Number(x.material.cost_per_unit||0)*x.quantity,0);
       const wastePercent=Number($("priceWastePercent").value||0);
-      const wasteCost=materialBase*wastePercent/100;
-      const materialsCost=materialBase+wasteCost;
-      const machinesCost=machineLines.reduce((sum,x)=>sum+((x.minutes+x.setup)/60)*machineOperatingCosts(x.machine).total,0);
-      const laborMinutes=Number($("priceLaborMinutes").value||0);
+      const wasteCostBatch=materialBaseBatch*wastePercent/100;
+      const materialsCostBatch=materialBaseBatch+wasteCostBatch;
+
+      // O tempo dos equipamentos também é informado para o lote completo.
+      const machinesCostBatch=machineLines.reduce((sum,x)=>sum+((x.minutes+x.setup)/60)*machineOperatingCosts(x.machine).total,0);
+      const laborMinutesBatch=Number($("priceLaborMinutes").value||0);
       const hourlyRate=Number($("priceHourlyRate").value||0);
-      const laborCost=(laborMinutes/60)*hourlyRate;
-      const otherCosts=Number($("priceOtherCosts").value||0);
-      const totalCost=materialsCost+machinesCost+laborCost+otherCosts;
+      const laborCostBatch=(laborMinutesBatch/60)*hourlyRate;
+      const otherCostsBatch=Number($("priceOtherCosts").value||0);
+      const totalCostBatch=materialsCostBatch+machinesCostBatch+laborCostBatch+otherCostsBatch;
+
+      // Resultados de custo e preço apresentados são POR UNIDADE.
+      const materialBase=materialBaseBatch/safeBatchQuantity;
+      const wasteCost=wasteCostBatch/safeBatchQuantity;
+      const materialsCost=materialsCostBatch/safeBatchQuantity;
+      const machinesCost=machinesCostBatch/safeBatchQuantity;
+      const laborMinutes=laborMinutesBatch/safeBatchQuantity;
+      const laborCost=laborCostBatch/safeBatchQuantity;
+      const otherCosts=otherCostsBatch/safeBatchQuantity;
+      const totalCost=totalCostBatch/safeBatchQuantity;
+
       const margin=Number($("priceMarginPercent").value||0);
       const price=margin>=100?NaN:(totalCost/(1-margin/100));
       const salePrice=Number.isFinite(price)?Math.round((price+Number.EPSILON)*100)/100:NaN;
       const profit=Number.isFinite(salePrice)?Math.round((salePrice-totalCost+Number.EPSILON)*100)/100:NaN;
-      pricingLastCalculation={materialLines,machineLines,materialBase,wastePercent,wasteCost,materialsCost,machinesCost,laborMinutes,hourlyRate,laborCost,otherCosts,totalCost,margin,salePrice,profit};
+      const batchSalePrice=Number.isFinite(salePrice)?Math.round((salePrice*safeBatchQuantity+Number.EPSILON)*100)/100:NaN;
+      const batchProfit=Number.isFinite(batchSalePrice)?Math.round((batchSalePrice-totalCostBatch+Number.EPSILON)*100)/100:NaN;
+
+      pricingLastCalculation={
+        batchQuantity,materialLines,machineLines,materialBase,wastePercent,wasteCost,materialsCost,
+        machinesCost,laborMinutes,hourlyRate,laborCost,otherCosts,totalCost,margin,salePrice,profit,
+        materialBaseBatch,wasteCostBatch,materialsCostBatch,machinesCostBatch,laborMinutesBatch,
+        laborCostBatch,otherCostsBatch,totalCostBatch,batchSalePrice,batchProfit
+      };
+
       $("resultMaterialsCost").textContent=fmtMoney(materialsCost);
       $("resultMachinesCost").textContent=fmtMoney(machinesCost);
       $("resultLaborCost").textContent=fmtMoney(laborCost);
@@ -752,15 +782,19 @@
       $("resultTotalCost").textContent=fmtMoney(totalCost);
       $("resultSalePrice").textContent=Number.isFinite(salePrice)?fmtMoney(salePrice):"Margem inválida";
       $("resultProfit").textContent=Number.isFinite(profit)?fmtMoney(profit):"—";
+      $("resultBatchTotalCost").textContent=fmtMoney(totalCostBatch);
+      $("resultBatchSalePrice").textContent=Number.isFinite(batchSalePrice)?fmtMoney(batchSalePrice):"Margem inválida";
+      $("resultBatchProfit").textContent=Number.isFinite(batchProfit)?fmtMoney(batchProfit):"—";
+
       if(showValidation){
-        if(margin<0||margin>=100||wastePercent<0||wastePercent>100||hourlyRate<0||otherCosts<0||laborMinutes<0){
-          message($("pricingCalculationMessage"),"Confira margem (0 a menos de 100%), desperdício (0–100%) e custos não negativos.","error");
-        }else if(laborMinutes>0&&hourlyRate===0){
+        if(!Number.isInteger(batchQuantity)||batchQuantity<1||margin<0||margin>=100||wastePercent<0||wastePercent>100||hourlyRate<0||otherCostsBatch<0||laborMinutesBatch<0){
+          message($("pricingCalculationMessage"),"Confira a quantidade inteira de unidades no lote, a margem (0 a menos de 100%), o desperdício (0–100%) e os custos não negativos.","error");
+        }else if(laborMinutesBatch>0&&hourlyRate===0){
           message($("pricingCalculationMessage"),"Atenção: há tempo de trabalho, mas o valor da sua hora está em R$ 0,00. A mão de obra não está entrando no custo.","info");
         }else if(totalCost===0){
           message($("pricingCalculationMessage"),"Informe materiais, equipamento, mão de obra ou outros custos para obter um preço com base no custo.","info");
         }else{
-          message($("pricingCalculationMessage"),`Cálculo atualizado. Custo de ${fmtMoney(totalCost)}; preço sugerido ${fmtMoney(salePrice)}; lucro estimado ${fmtMoney(profit)} por unidade.`,"success");
+          message($("pricingCalculationMessage"),`Lote de ${batchQuantity} unidade(s). Custo unitário: ${fmtMoney(totalCost)}; preço sugerido por unidade: ${fmtMoney(salePrice)}; custo total do lote: ${fmtMoney(totalCostBatch)}; lucro estimado por unidade: ${fmtMoney(profit)}.`,"success");
         }
       }
       return pricingLastCalculation;
@@ -826,6 +860,7 @@
       const calc=calculatePricingValues(true);
       const name=$("priceProductName").value.trim();
       if(!name){message($("pricingFeedback"),"Informe o nome do produto.","error");return;}
+      if(!Number.isInteger(calc.batchQuantity)||calc.batchQuantity<1){message($("pricingFeedback"),"Informe uma quantidade inteira maior que zero para o lote.","error");return;}
       if(!Number.isFinite(calc.salePrice)||calc.margin<0||calc.margin>=100||calc.wastePercent<0||calc.wastePercent>100){message($("pricingFeedback"),"Confira os valores da margem e do desperdício.","error");return;}
       if(calc.totalCost<=0||calc.salePrice<=0){message($("pricingFeedback"),"O custo calculado é zero. Informe os materiais e/ou custos antes de salvar o produto.","error");return;}
       const btn=$("savePricedProductButton");btn.disabled=true;btn.textContent="Salvando produto...";
@@ -836,10 +871,10 @@
         if(error)throw error;
         productId=data.id;
         const aggregated=new Map();
-        for(const line of calc.materialLines){aggregated.set(line.material.id,(aggregated.get(line.material.id)||0)+line.quantity);}
+        for(const line of calc.materialLines){aggregated.set(line.material.id,(aggregated.get(line.material.id)||0)+(line.quantity/calc.batchQuantity));}
         const materialRows=[...aggregated.entries()].map(([material_id,quantity])=>({user_id:currentUser.id,product_id:productId,material_id,quantity}));
         if(materialRows.length){const {error:materialError}=await supabaseClient.from("product_materials").insert(materialRows);if(materialError)throw materialError;}
-        const machineRows=calc.machineLines.map(line=>({user_id:currentUser.id,product_id:productId,machine_id:line.machine.id,minutes_per_unit:line.minutes,setup_minutes:line.setup,notes:null}));
+        const machineRows=calc.machineLines.map(line=>({user_id:currentUser.id,product_id:productId,machine_id:line.machine.id,minutes_per_unit:line.minutes/calc.batchQuantity,setup_minutes:line.setup/calc.batchQuantity,notes:null}));
         if(machineRows.length){const {error:machineError}=await supabaseClient.from("product_machine_usage").insert(machineRows);if(machineError)throw machineError;}
         let settingsWarning="";
         try{await persistPricingSettings();}catch(settingsError){console.warn("Configurações não salvas:",settingsError.message);settingsWarning=" O produto foi salvo, mas as configurações padrão não puderam ser memorizadas.";}
@@ -865,7 +900,7 @@
       if(recoveryMode&&!recoveryCompleted){showReset();return;}
       if(event==="SIGNED_OUT"){currentUser=null;showLogin();return;}
       if(session?.user){currentUser=session.user;showApp(session.user);loadMaterials();return;}
-      showLogin(); 
+      showLogin();
     });
 
     async function initialize(){
