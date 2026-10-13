@@ -59,6 +59,7 @@
     <nav class="nav" aria-label="Menu principal">
       <button type="button" class="active" data-view="dashboardView">Visão geral</button>
       <button type="button" data-view="materialsView">Materiais e insumos</button>
+      <button type="button" data-view="machinesView">Equipamentos</button>
     </nav>
     <main>
       <section id="dashboardView">
@@ -136,6 +137,48 @@
           <div class="table-wrap"><table><thead><tr><th>Data</th><th>Material</th><th>Fornecedor</th><th>Quantidade</th><th>Valor pago</th><th>Custo por unidade-base</th></tr></thead><tbody id="purchasesTableBody"><tr><td colspan="6" class="empty">Nenhuma compra carregada.</td></tr></tbody></table></div>
         </section>
       </section>
+
+      <section id="machinesView" class="hidden">
+        <div class="section-head">
+          <div>
+            <h2>Equipamentos</h2>
+            <p>Cadastre a Epson L805, a Silhouette CAMEO 5 Alpha, a Bambu Lab A1 e outros equipamentos. O custo por hora é uma estimativa baseada nos dados informados.</p>
+          </div>
+          <button class="btn btn-primary" id="newMachineButton" type="button">+ Novo equipamento</button>
+        </div>
+        <div id="machinesFeedback" class="message" role="status" aria-live="polite"></div>
+
+        <section id="machineFormPanel" class="panel hidden">
+          <h3 id="machineFormTitle">Cadastrar equipamento</h3>
+          <p class="small" style="margin-top:-8px;margin-bottom:18px">Informe apenas os custos que souber. Valores de energia, manutenção e depreciação podem ser ajustados posteriormente; não usamos estimativas automáticas de consumo da máquina.</p>
+          <form id="machineForm">
+            <input id="machineId" type="hidden">
+            <div class="form-grid">
+              <div class="field"><label for="machineName">Nome do equipamento *</label><input id="machineName" required placeholder="Ex.: Impressora Epson L805"></div>
+              <div class="field"><label for="machineType">Tipo *</label><select id="machineType" required><option value="printer">Impressora</option><option value="cutter">Máquina de corte</option><option value="3d_printer">Impressora 3D</option><option value="camera">Câmera fotográfica</option><option value="drone">Drone</option><option value="other">Outro</option></select></div>
+              <div class="field"><label for="machineBrand">Marca</label><input id="machineBrand" placeholder="Ex.: Epson, Silhouette, Bambu Lab"></div>
+              <div class="field"><label for="machineModel">Modelo</label><input id="machineModel" placeholder="Ex.: L805, CAMEO 5 Alpha, A1"></div>
+              <div class="field"><label for="machinePower">Potência (W)</label><input id="machinePower" type="number" min="0" step="0.01" value="0"><span class="sub">Use a informação da etiqueta/manual, se disponível.</span></div>
+              <div class="field"><label for="machineTariff">Tarifa de energia (R$/kWh)</label><input id="machineTariff" type="number" min="0" step="0.0001" value="0"><span class="sub">Pode deixar zero até consultar a conta de luz.</span></div>
+              <div class="field"><label for="machinePurchasePrice">Preço de compra (R$)</label><input id="machinePurchasePrice" type="number" min="0" step="0.01" value="0"></div>
+              <div class="field"><label for="machinePurchaseDate">Data da compra</label><input id="machinePurchaseDate" type="date"></div>
+              <div class="field"><label for="machineLifeHours">Vida útil estimada (horas)</label><input id="machineLifeHours" type="number" min="0" step="1" placeholder="Opcional"><span class="sub">Dado de referência para calcular a depreciação em uma etapa posterior.</span></div>
+              <div class="field"><label for="machineMaintenanceHour">Manutenção por hora (R$)</label><input id="machineMaintenanceHour" type="number" min="0" step="0.0001" value="0"></div>
+              <div class="field"><label for="machineDepreciationHour">Depreciação por hora (R$)</label><input id="machineDepreciationHour" type="number" min="0" step="0.0001" value="0"><span class="sub">Informe manualmente se souber; se não, deixe zero por enquanto.</span></div>
+              <div class="field span-3"><label for="machineNotes">Observações</label><textarea id="machineNotes" placeholder="Ex.: troca de lâmina, manutenção, cuidados ou informações úteis"></textarea></div>
+            </div>
+            <div class="form-actions"><button class="btn btn-primary" id="saveMachineButton" type="submit">Salvar equipamento</button><button class="btn btn-outline" id="cancelMachineButton" type="button">Cancelar</button></div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="section-head"><div><h3 style="margin-bottom:0">Equipamentos cadastrados</h3><p>O custo por hora considera energia + manutenção + depreciação informadas.</p></div></div>
+          <div class="search-row"><input id="machineSearch" type="search" placeholder="Buscar por equipamento, marca ou modelo..."><button class="btn btn-outline" id="refreshMachinesButton" type="button">Atualizar lista</button></div>
+          <div id="machinesStatus" class="status-line"></div>
+          <div class="table-wrap"><table><thead><tr><th>Equipamento</th><th>Tipo / marca / modelo</th><th>Potência</th><th>Energia por hora</th><th>Manutenção + depreciação</th><th>Custo estimado por hora</th><th>Ações</th></tr></thead><tbody id="machinesTableBody"><tr><td colspan="7" class="empty">Entre no sistema para carregar os equipamentos.</td></tr></tbody></table></div>
+          <p class="small" style="margin-top:12px">Importante: a estimativa por hora só ficará completa quando você informar a potência, a tarifa de energia e os custos por hora que desejar considerar. Ela não mede o consumo real da máquina.</p>
+        </section>
+      </section>
     </main>
     <div class="footer">Arte Criativa Estúdio • Sistema de Gestão</div>
   </section>
@@ -157,6 +200,7 @@
     let recoveryCompleted = false;
     let currentUser = null;
     let materialsCache = [];
+    let machinesCache = [];
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
       auth: { flowType:"implicit", persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
@@ -178,9 +222,10 @@
     function clearRecoveryUrl(){ try{window.history.replaceState({},document.title,window.location.pathname);}catch(e){console.warn(e);} }
 
     function switchView(viewId){
-      ["dashboardView","materialsView"].forEach(id=>$(id).classList.toggle("hidden",id!==viewId));
+      ["dashboardView","materialsView","machinesView"].forEach(id=>$(id).classList.toggle("hidden",id!==viewId));
       document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.view===viewId));
       if(viewId==="materialsView") loadMaterials();
+      if(viewId==="machinesView") loadMachines();
     }
     document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.addEventListener("click",()=>switchView(btn.dataset.view)));
 
@@ -369,6 +414,147 @@
       if(error){message($("materialsFeedback"),"Não foi possível desativar: "+error.message,"error");return;}
       message($("materialsFeedback"),"Material desativado. O histórico foi preservado.","success");await loadMaterials();
     }
+
+    function machineTypeLabel(value){
+      return ({printer:"Impressora",cutter:"Máquina de corte","3d_printer":"Impressora 3D",camera:"Câmera fotográfica",drone:"Drone",other:"Outro"})[value]||value||"—";
+    }
+
+    function machineOperatingCosts(machine){
+      const power=Number(machine.power_watts||0);
+      const tariff=Number(machine.electricity_cost_per_kwh||0);
+      const energy=(power/1000)*tariff;
+      const maintenance=Number(machine.maintenance_cost_per_hour||0);
+      const depreciation=Number(machine.depreciation_cost_per_hour||0);
+      return {energy,maintenance,depreciation,total:energy+maintenance+depreciation};
+    }
+
+    async function loadMachines(){
+      if(!currentUser)return;
+      $("machinesStatus").textContent="Carregando equipamentos...";
+      try{
+        const {data,error}=await supabaseClient.from("machines")
+          .select("id,user_id,name,machine_type,brand,model,power_watts,electricity_cost_per_kwh,purchase_price,maintenance_cost_per_hour,depreciation_cost_per_hour,purchase_date,useful_life_hours,notes,active,created_at,updated_at")
+          .eq("active",true).order("name");
+        if(error)throw error;
+        machinesCache=data||[];
+        renderMachines();
+        $("machinesStatus").textContent=machinesCache.length+" equipamento(s) cadastrado(s).";
+      }catch(err){
+        console.error("Load machines:",err);
+        $("machinesStatus").textContent="Não foi possível carregar os equipamentos: "+(err.message||"erro de conexão");
+        message($("machinesFeedback"),"Verifique as permissões e a política de segurança da tabela machines.","error");
+      }
+    }
+
+    function renderMachines(){
+      const q=$("machineSearch").value.trim().toLowerCase();
+      const list=machinesCache.filter(m=>[m.name,m.machine_type,m.brand,m.model,m.notes].some(v=>String(v||"").toLowerCase().includes(q)));
+      const body=$("machinesTableBody");
+      if(!list.length){body.innerHTML='<tr><td colspan="7" class="empty">Nenhum equipamento encontrado. Clique em “Novo equipamento” para cadastrar o primeiro.</td></tr>';return;}
+      body.innerHTML=list.map(m=>{
+        const costs=machineOperatingCosts(m);
+        return `<tr>
+          <td><strong>${escapeHtml(m.name)}</strong><span class="sub">${m.purchase_date?"Compra: "+escapeHtml(m.purchase_date):"Data de compra não informada"}</span></td>
+          <td>${escapeHtml(machineTypeLabel(m.machine_type))}<span class="sub">${escapeHtml(m.brand||"Sem marca")}${m.model?" • "+escapeHtml(m.model):""}</span></td>
+          <td>${fmtQty(m.power_watts||0)} W</td>
+          <td>${fmtMoney(costs.energy)}<span class="sub">por hora</span></td>
+          <td>${fmtMoney(costs.maintenance+costs.depreciation)}<span class="sub">${fmtMoney(costs.maintenance)} manutenção • ${fmtMoney(costs.depreciation)} depreciação</span></td>
+          <td><strong>${fmtMoney(costs.total)}/h</strong></td>
+          <td><button class="btn btn-outline" data-edit-machine="${escapeHtml(m.id)}" type="button">Editar</button> <button class="btn btn-danger" data-disable-machine="${escapeHtml(m.id)}" type="button">Desativar</button></td>
+        </tr>`;
+      }).join("");
+      body.querySelectorAll("button[data-edit-machine]").forEach(btn=>btn.addEventListener("click",()=>openMachineForm(btn.dataset.editMachine)));
+      body.querySelectorAll("button[data-disable-machine]").forEach(btn=>btn.addEventListener("click",()=>deactivateMachine(btn.dataset.disableMachine)));
+    }
+
+    function openMachineForm(id=""){
+      const machine=id?machinesCache.find(m=>m.id===id):null;
+      $("machineForm").reset();
+      $("machineId").value=machine?machine.id:"";
+      $("machineFormTitle").textContent=machine?"Editar equipamento":"Cadastrar equipamento";
+      $("saveMachineButton").textContent=machine?"Salvar alterações":"Salvar equipamento";
+      $("machineName").value=machine?.name||"";
+      $("machineType").value=machine?.machine_type||"printer";
+      $("machineBrand").value=machine?.brand||"";
+      $("machineModel").value=machine?.model||"";
+      $("machinePower").value=machine?.power_watts??0;
+      $("machineTariff").value=machine?.electricity_cost_per_kwh??0;
+      $("machinePurchasePrice").value=machine?.purchase_price??0;
+      $("machinePurchaseDate").value=machine?.purchase_date||"";
+      $("machineLifeHours").value=machine?.useful_life_hours??"";
+      $("machineMaintenanceHour").value=machine?.maintenance_cost_per_hour??0;
+      $("machineDepreciationHour").value=machine?.depreciation_cost_per_hour??0;
+      $("machineNotes").value=machine?.notes||"";
+      clearMsg($("machinesFeedback"));
+      $("machineFormPanel").classList.remove("hidden");
+      $("machineFormPanel").scrollIntoView({behavior:"smooth",block:"start"});
+    }
+
+    async function deactivateMachine(id){
+      const machine=machinesCache.find(m=>m.id===id);
+      if(!machine)return;
+      if(!confirm(`Desativar “${machine.name}”? O registro será preservado e não será excluído.`))return;
+      const {error}=await supabaseClient.from("machines").update({active:false,updated_at:new Date().toISOString()}).eq("id",id);
+      if(error){message($("machinesFeedback"),"Não foi possível desativar o equipamento: "+error.message,"error");return;}
+      message($("machinesFeedback"),"Equipamento desativado. O histórico foi preservado.","success");
+      await loadMachines();
+    }
+
+    $("newMachineButton").addEventListener("click",()=>openMachineForm());
+    $("cancelMachineButton").addEventListener("click",()=>$("machineFormPanel").classList.add("hidden"));
+    $("refreshMachinesButton").addEventListener("click",loadMachines);
+    $("machineSearch").addEventListener("input",renderMachines);
+
+    $("machineForm").addEventListener("submit",async e=>{
+      e.preventDefault();clearMsg($("machinesFeedback"));
+      const button=$("saveMachineButton");
+      const id=$("machineId").value;
+      button.disabled=true;button.textContent=id?"Salvando alterações...":"Salvando...";
+      const numeric=(id)=>{const value=$(id).value.trim();return value===""?null:Number(value);};
+      const power=numeric("machinePower");
+      const tariff=numeric("machineTariff");
+      const purchasePrice=numeric("machinePurchasePrice");
+      const lifeHours=numeric("machineLifeHours");
+      const maintenance=numeric("machineMaintenanceHour");
+      const depreciation=numeric("machineDepreciationHour");
+      if([power,tariff,purchasePrice,maintenance,depreciation].some(v=>v===null||!Number.isFinite(v)||v<0)|| (lifeHours!==null&&(!Number.isFinite(lifeHours)||lifeHours<0))){
+        message($("machinesFeedback"),"Confira os custos e valores numéricos. Eles não podem ser negativos.","error");
+        button.disabled=false;button.textContent=id?"Salvar alterações":"Salvar equipamento";return;
+      }
+      const payload={
+        name:$("machineName").value.trim(),
+        machine_type:$("machineType").value,
+        brand:$("machineBrand").value.trim()||null,
+        model:$("machineModel").value.trim()||null,
+        power_watts:power,
+        electricity_cost_per_kwh:tariff,
+        purchase_price:purchasePrice,
+        purchase_date:$("machinePurchaseDate").value||null,
+        useful_life_hours:lifeHours,
+        maintenance_cost_per_hour:maintenance,
+        depreciation_cost_per_hour:depreciation,
+        notes:$("machineNotes").value.trim()||null,
+        updated_at:new Date().toISOString()
+      };
+      try{
+        let result;
+        if(id){
+          result=await supabaseClient.from("machines").update(payload).eq("id",id).select("id").single();
+        }else{
+          result=await supabaseClient.from("machines").insert(payload).select("id").single();
+        }
+        if(result.error)throw result.error;
+        $("machineFormPanel").classList.add("hidden");
+        $("machineForm").reset();
+        message($("machinesFeedback"),id?"Equipamento atualizado com sucesso.":"Equipamento cadastrado com sucesso.","success");
+        await loadMachines();
+      }catch(err){
+        console.error("Save machine:",err);
+        message($("machinesFeedback"),"Não foi possível salvar o equipamento: "+(err.message||"erro desconhecido"),"error");
+      }finally{
+        button.disabled=false;button.textContent=id?"Salvar alterações":"Salvar equipamento";
+      }
+    });
 
     supabaseClient.auth.onAuthStateChange((event,session)=>{
       if(event==="PASSWORD_RECOVERY"){recoveryMode=true;recoveryCompleted=false;showReset();return;}
