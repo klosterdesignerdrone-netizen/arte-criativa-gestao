@@ -865,7 +865,7 @@
       if(recoveryMode&&!recoveryCompleted){showReset();return;}
       if(event==="SIGNED_OUT"){currentUser=null;showLogin();return;}
       if(session?.user){currentUser=session.user;showApp(session.user);loadMaterials();return;}
-      showLogin();
+      showLogin(); 
     });
 
     async function initialize(){
