@@ -218,12 +218,45 @@
     function showLogin(){ hideAllScreens(); $("loginScreen").classList.remove("hidden"); }
     function showForgot(){ hideAllScreens(); $("forgotScreen").classList.remove("hidden"); const email=$("loginEmail").value.trim(); if(email) $("forgotEmail").value=email; clearMsg($("forgotMessage")); }
     function showReset(){ hideAllScreens(); $("resetScreen").classList.remove("hidden"); }
-    function showApp(user){ if(recoveryMode&&!recoveryCompleted){showReset();return;} hideAllScreens(); $("appScreen").classList.remove("hidden"); $("userEmail").textContent="Usuário conectado: "+(user?.email||""); switchView("dashboardView"); }
+    const VALID_VIEWS = ["dashboardView", "materialsView", "machinesView"];
+    const LAST_VIEW_KEY_PREFIX = "arteCriativa:lastView:";
+
+    function getSavedView(userId){
+      if(!userId) return "dashboardView";
+      try {
+        const saved = localStorage.getItem(LAST_VIEW_KEY_PREFIX + userId);
+        return VALID_VIEWS.includes(saved) ? saved : "dashboardView";
+      } catch (error) {
+        console.warn("Não foi possível recuperar a última aba:", error);
+        return "dashboardView";
+      }
+    }
+
+    function saveCurrentView(viewId){
+      if(!currentUser?.id || !VALID_VIEWS.includes(viewId)) return;
+      try {
+        localStorage.setItem(LAST_VIEW_KEY_PREFIX + currentUser.id, viewId);
+      } catch (error) {
+        console.warn("Não foi possível guardar a última aba:", error);
+      }
+    }
+
+    function showApp(user){
+      if(recoveryMode&&!recoveryCompleted){showReset();return;}
+      if(user) currentUser = user;
+      hideAllScreens();
+      $("appScreen").classList.remove("hidden");
+      $("userEmail").textContent="Usuário conectado: "+(user?.email||currentUser?.email||"");
+      switchView(getSavedView(currentUser?.id));
+    }
+
     function clearRecoveryUrl(){ try{window.history.replaceState({},document.title,window.location.pathname);}catch(e){console.warn(e);} }
 
     function switchView(viewId){
+      if(!VALID_VIEWS.includes(viewId)) viewId = "dashboardView";
       ["dashboardView","materialsView","machinesView"].forEach(id=>$(id).classList.toggle("hidden",id!==viewId));
       document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.view===viewId));
+      saveCurrentView(viewId);
       if(viewId==="materialsView") loadMaterials();
       if(viewId==="machinesView") loadMachines();
     }
