@@ -12,8 +12,15 @@
     .field{margin-bottom:15px}.field label{display:block;margin-bottom:7px;font-size:14px;font-weight:bold}.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text)}.field textarea{min-height:78px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px #d4af3726}.btn{border:0;border-radius:8px;padding:11px 15px;font-weight:bold}.btn-primary{background:var(--gold);color:var(--navy)}.btn-dark{background:var(--navy);color:#fff}.btn-outline{border:1px solid var(--gold);background:white;color:var(--navy)}.btn-danger{background:#fff0ef;border:1px solid #ffd5d2;color:var(--danger)}.btn-link{display:block;margin:15px auto 0;border:0;background:none;color:var(--navy);text-decoration:underline;font-size:14px}.btn-wide{width:100%;padding:13px}.message{margin-top:14px;padding:10px;border-radius:8px;font-size:14px;line-height:1.45;overflow-wrap:anywhere}.message:empty{display:none}.message.success{color:var(--success);background:#ecfdf3}.message.error{color:var(--danger);background:#fef3f2}.message.info{color:var(--navy);background:#eef4ff}
     header{background:var(--navy);color:#fff;padding:19px 4%;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}header h1{font-size:25px}header p{color:var(--gold);margin-top:4px}.header-right{display:flex;gap:10px;align-items:center}.btn-logout{padding:9px 14px;background:transparent;border:1px solid var(--gold);border-radius:8px;color:#fff}.nav{background:white;border-bottom:1px solid var(--border);padding:0 4%;display:flex;gap:8px;overflow-x:auto}.nav button{border:0;background:none;color:var(--muted);padding:15px 16px;white-space:nowrap;border-bottom:3px solid transparent;font-weight:bold}.nav button.active{color:var(--navy);border-bottom-color:var(--gold)}main{width:min(1300px,94%);margin:28px auto}.welcome{padding:24px;background:#fff;border-radius:15px;margin-bottom:22px;box-shadow:0 4px 14px #0000000a}.welcome h2{margin-bottom:8px}.welcome p{color:var(--muted);line-height:1.5}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.card{padding:21px;background:#fff;border-top:4px solid var(--gold);border-radius:13px;box-shadow:0 4px 14px #0000000a}.card h3{margin-bottom:10px;font-size:17px}.card p{color:var(--muted);font-size:14px}.value{margin-top:12px;font-size:24px;font-weight:bold;color:var(--navy);overflow-wrap:anywhere}.notice{margin-top:22px;padding:16px;background:#fff9e8;border:1px solid #f1dfa1;border-radius:9px;line-height:1.5;font-size:14px}
     .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}.section-head h2{font-size:23px}.section-head p{color:var(--muted);margin-top:5px;font-size:14px}.panel{background:white;border-radius:14px;padding:22px;margin-bottom:20px;box-shadow:0 4px 14px #0000000a}.panel h3{margin-bottom:17px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 15px}.span-2{grid-column:span 2}.span-3{grid-column:span 3}.form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:5px}.search-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}.search-row input{flex:1;min-width:220px;padding:11px 12px;border:1px solid var(--border);border-radius:8px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #edf0f3;vertical-align:top}th{background:#f8f9fb;color:#4b5565;font-size:12px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}td .sub{display:block;color:var(--muted);font-size:12px;margin-top:4px}.stock-low{color:var(--danger);font-weight:bold}.stock-ok{color:var(--success)}.empty{text-align:center;color:var(--muted);padding:28px}.small{font-size:12px;color:var(--muted);line-height:1.5}.footer{text-align:center;padding:25px;color:var(--muted);font-size:13px}.status-line{margin:10px 0;color:var(--muted);font-size:13px}
-    @media(max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.span-3{grid-column:span 2}}
-    @media(max-width:560px){.auth-box{padding:25px 20px}.brand h1{font-size:23px}header{padding:18px}header h1{font-size:22px}.cards,.form-grid{grid-template-columns:1fr}.span-2,.span-3{grid-column:span 1}.panel{padding:16px}main{width:94%;margin:20px auto}.section-head h2{font-size:21px}}
+    .pricing-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+    .pricing-result{background:#f8f9fb;border:1px solid var(--border);border-radius:10px;padding:15px}
+    .pricing-result span{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    .pricing-result strong{font-size:20px;color:var(--navy);overflow-wrap:anywhere}
+    .pricing-line{background:#fafbfc;border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px}
+    .pricing-line .form-grid{align-items:end}
+    .pricing-note{background:#fff9e8;border:1px solid #f1dfa1;padding:13px;border-radius:9px;font-size:13px;line-height:1.5;color:var(--text);margin-bottom:16px}
+    @media(max-width:900px){.pricing-results{grid-template-columns:repeat(2,minmax(0,1fr))}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.span-3{grid-column:span 2}}
+    @media(max-width:560px){.pricing-results{grid-template-columns:1fr}.auth-box{padding:25px 20px}.brand h1{font-size:23px}header{padding:18px}header h1{font-size:22px}.cards,.form-grid{grid-template-columns:1fr}.span-2,.span-3{grid-column:span 1}.panel{padding:16px}main{width:94%;margin:20px auto}.section-head h2{font-size:21px}}
   </style>
 </head>
 <body>
@@ -60,6 +67,7 @@
       <button type="button" class="active" data-view="dashboardView">Visão geral</button>
       <button type="button" data-view="materialsView">Materiais e insumos</button>
       <button type="button" data-view="machinesView">Equipamentos</button>
+      <button type="button" data-view="pricingView">Precificação</button>
     </nav>
     <main>
       <section id="dashboardView">
@@ -179,6 +187,66 @@
           <p class="small" style="margin-top:12px">Importante: a estimativa por hora só ficará completa quando você informar a potência, a tarifa de energia e os custos por hora que desejar considerar. Ela não mede o consumo real da máquina.</p>
         </section>
       </section>
+
+      <section id="pricingView" class="hidden">
+        <div class="section-head">
+          <div><h2>Precificação de produtos</h2><p>Calcule custos e preço sugerido usando seus materiais e equipamentos cadastrados.</p></div>
+        </div>
+        <div id="pricingFeedback" class="message" role="status" aria-live="polite"></div>
+        <div class="pricing-note"><strong>Como funciona:</strong> a calculadora soma materiais, desperdício informado, tempo de máquina, mão de obra e outros custos. O preço sugerido usa a margem desejada sobre o preço de venda (não é markup). Para calcular corretamente, cadastre os materiais e equipamentos e informe seu valor de hora de trabalho. Os cálculos são estimativas com base nos dados cadastrados.</div>
+
+        <form id="pricingForm">
+          <section class="panel">
+            <h3>1. Dados do produto</h3>
+            <div class="form-grid">
+              <div class="field"><label for="priceProductName">Nome do produto *</label><input id="priceProductName" required placeholder="Ex.: Chaveiro personalizado"></div>
+              <div class="field"><label for="priceProductType">Tipo</label><select id="priceProductType"><option value="product">Produto físico</option><option value="service">Serviço</option></select></div>
+              <div class="field"><label for="priceProductCategory">Categoria</label><input id="priceProductCategory" placeholder="Ex.: Impressão 3D, papelaria"></div>
+              <div class="field span-3"><label for="priceProductDescription">Descrição / observações</label><textarea id="priceProductDescription" placeholder="Detalhes, personalização ou acabamento"></textarea></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head"><div><h3 style="margin-bottom:0">2. Materiais utilizados</h3><p>Selecione cada material e informe a quantidade por unidade produzida.</p></div><button class="btn btn-outline" type="button" id="addPricingMaterialButton">+ Adicionar material</button></div>
+            <div id="pricingMaterialsList"></div>
+            <div id="pricingMaterialsEmpty" class="empty">Nenhum material adicionado. Clique em “Adicionar material”.</div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head"><div><h3 style="margin-bottom:0">3. Equipamentos utilizados</h3><p>Informe os minutos de uso por unidade. A preparação pode ser distribuída no tempo de cada unidade.</p></div><button class="btn btn-outline" type="button" id="addPricingMachineButton">+ Adicionar equipamento</button></div>
+            <div id="pricingMachinesList"></div>
+            <div id="pricingMachinesEmpty" class="empty">Nenhum equipamento adicionado. Clique em “Adicionar equipamento”.</div>
+          </section>
+
+          <section class="panel">
+            <h3>4. Mão de obra e outros custos</h3>
+            <div class="form-grid">
+              <div class="field"><label for="priceLaborMinutes">Seu tempo de trabalho por unidade (minutos)</label><input id="priceLaborMinutes" type="number" min="0" step="1" value="0"></div>
+              <div class="field"><label for="priceHourlyRate">Valor da sua hora de trabalho (R$)</label><input id="priceHourlyRate" type="number" min="0" step="0.01" value="0"><span class="sub">Defina quanto deseja receber pela sua hora de trabalho.</span></div>
+              <div class="field"><label for="priceOtherCosts">Outros custos por unidade (R$)</label><input id="priceOtherCosts" type="number" min="0" step="0.01" value="0"><span class="sub">Ex.: taxa, acabamento ou despesas ainda não cadastradas como material.</span></div>
+              <div class="field"><label for="priceWastePercent">Desperdício de materiais (%)</label><input id="priceWastePercent" type="number" min="0" max="100" step="0.1" value="5"></div>
+              <div class="field"><label for="priceMarginPercent">Margem de lucro desejada (%)</label><input id="priceMarginPercent" type="number" min="0" max="99" step="0.1" value="50"><span class="sub">A margem precisa ser menor que 100%.</span></div>
+            </div>
+            <div class="form-actions"><button class="btn btn-outline" type="button" id="recalculatePriceButton">Recalcular preço</button><button class="btn btn-primary" type="submit" id="savePricedProductButton">Salvar produto e ficha técnica</button></div>
+            <div id="pricingCalculationMessage" class="message" role="status" aria-live="polite"></div>
+            <div class="pricing-results">
+              <div class="pricing-result"><span>Custo de materiais + desperdício</span><strong id="resultMaterialsCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Custo dos equipamentos</span><strong id="resultMachinesCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Custo da mão de obra</span><strong id="resultLaborCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Outros custos</span><strong id="resultOtherCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span><strong>CUSTO TOTAL</strong></span><strong id="resultTotalCost">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>PREÇO DE VENDA SUGERIDO</span><strong id="resultSalePrice">R$ 0,00</strong></div>
+              <div class="pricing-result"><span>Lucro estimado por unidade</span><strong id="resultProfit">R$ 0,00</strong></div>
+            </div>
+          </section>
+        </form>
+
+        <section class="panel">
+          <div class="section-head"><div><h3 style="margin-bottom:0">Produtos precificados</h3><p>Produtos salvos e seus custos/preços atuais registrados.</p></div><button class="btn btn-outline" type="button" id="refreshProductsButton">Atualizar lista</button></div>
+          <div id="productsStatus" class="status-line"></div>
+          <div class="table-wrap"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Custo registrado</th><th>Preço de venda</th><th>Lucro estimado</th><th>Ação</th></tr></thead><tbody id="productsTableBody"><tr><td colspan="6" class="empty">Nenhum produto carregado.</td></tr></tbody></table></div>
+        </section>
+      </section>
     </main>
     <div class="footer">Arte Criativa Estúdio • Sistema de Gestão</div>
   </section>
@@ -201,6 +269,8 @@
     let currentUser = null;
     let materialsCache = [];
     let machinesCache = [];
+    let pricingSettingsLoaded = false;
+    let productsCache = [];
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
       auth: { flowType:"implicit", persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
@@ -218,7 +288,7 @@
     function showLogin(){ hideAllScreens(); $("loginScreen").classList.remove("hidden"); }
     function showForgot(){ hideAllScreens(); $("forgotScreen").classList.remove("hidden"); const email=$("loginEmail").value.trim(); if(email) $("forgotEmail").value=email; clearMsg($("forgotMessage")); }
     function showReset(){ hideAllScreens(); $("resetScreen").classList.remove("hidden"); }
-    const VALID_VIEWS = ["dashboardView", "materialsView", "machinesView"];
+    const VALID_VIEWS = ["dashboardView", "materialsView", "machinesView", "pricingView"];
     const LAST_VIEW_KEY_PREFIX = "arteCriativa:lastView:";
 
     function getSavedView(userId){
@@ -254,11 +324,12 @@
 
     function switchView(viewId){
       if(!VALID_VIEWS.includes(viewId)) viewId = "dashboardView";
-      ["dashboardView","materialsView","machinesView"].forEach(id=>$(id).classList.toggle("hidden",id!==viewId));
+      ["dashboardView","materialsView","machinesView","pricingView"].forEach(id=>$(id).classList.toggle("hidden",id!==viewId));
       document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.view===viewId));
       saveCurrentView(viewId);
       if(viewId==="materialsView") loadMaterials();
       if(viewId==="machinesView") loadMachines();
+      if(viewId==="pricingView") loadPricingData();
     }
     document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.addEventListener("click",()=>switchView(btn.dataset.view)));
 
@@ -588,6 +659,206 @@
         button.disabled=false;button.textContent=id?"Salvar alterações":"Salvar equipamento";
       }
     });
+
+    // ============================================================
+    // PRECIFICAÇÃO E FICHA TÉCNICA
+    // ============================================================
+    let pricingLastCalculation = null;
+
+    function materialOptionsHtml(selectedId=""){
+      return '<option value="">Selecione um material</option>' + materialsCache.map(m =>
+        `<option value="${escapeHtml(m.id)}" ${m.id===selectedId?'selected':''}>${escapeHtml(m.name)}${m.color?' • '+escapeHtml(m.color):''} — ${fmtMoney(m.cost_per_unit)}/${escapeHtml(unitLabel(m.base_unit||m.unit))}</option>`
+      ).join("");
+    }
+
+    function machineOptionsHtml(selectedId=""){
+      return '<option value="">Selecione um equipamento</option>' + machinesCache.map(m => {
+        const c=machineOperatingCosts(m);
+        return `<option value="${escapeHtml(m.id)}" ${m.id===selectedId?'selected':''}>${escapeHtml(m.name)} — ${fmtMoney(c.total)}/h</option>`;
+      }).join("");
+    }
+
+    function addPricingMaterialLine(selectedId="", quantity="1"){
+      const row=document.createElement("div");
+      row.className="pricing-line pricing-material-line";
+      row.innerHTML=`<div class="form-grid"><div class="field span-2"><label>Material</label><select class="pricing-material-select">${materialOptionsHtml(selectedId)}</select></div><div class="field"><label>Quantidade por unidade</label><input class="pricing-material-qty" type="number" min="0" step="0.0001" value="${escapeHtml(quantity)}"><span class="sub pricing-material-unit">Selecione o material.</span></div></div><div class="form-actions"><button class="btn btn-danger remove-pricing-line" type="button">Remover material</button></div>`;
+      $("pricingMaterialsList").appendChild(row);
+      const select=row.querySelector(".pricing-material-select");
+      const qty=row.querySelector(".pricing-material-qty");
+      select.addEventListener("change",()=>{updatePricingMaterialUnit(row);recalculatePricing();});
+      qty.addEventListener("input",recalculatePricing);
+      row.querySelector(".remove-pricing-line").addEventListener("click",()=>{row.remove();updatePricingEmptyLabels();recalculatePricing();});
+      updatePricingMaterialUnit(row);updatePricingEmptyLabels();recalculatePricing();
+    }
+
+    function updatePricingMaterialUnit(row){
+      const m=materialsCache.find(x=>x.id===row.querySelector(".pricing-material-select").value);
+      row.querySelector(".pricing-material-unit").textContent=m?`Custo: ${fmtMoney(m.cost_per_unit)} por ${unitLabel(m.base_unit||m.unit)}. Estoque disponível: ${fmtQty(m.stock_quantity)}.`:"Selecione o material.";
+    }
+
+    function addPricingMachineLine(selectedId="", minutes="0", setup="0"){
+      const row=document.createElement("div");
+      row.className="pricing-line pricing-machine-line";
+      row.innerHTML=`<div class="form-grid"><div class="field span-2"><label>Equipamento</label><select class="pricing-machine-select">${machineOptionsHtml(selectedId)}</select></div><div class="field"><label>Minutos por unidade</label><input class="pricing-machine-minutes" type="number" min="0" step="0.1" value="${escapeHtml(minutes)}"></div><div class="field"><label>Preparação por unidade (min)</label><input class="pricing-machine-setup" type="number" min="0" step="0.1" value="${escapeHtml(setup)}"></div></div><div class="form-actions"><button class="btn btn-danger remove-pricing-line" type="button">Remover equipamento</button></div>`;
+      $("pricingMachinesList").appendChild(row);
+      row.querySelector(".pricing-machine-select").addEventListener("change",recalculatePricing);
+      row.querySelector(".pricing-machine-minutes").addEventListener("input",recalculatePricing);
+      row.querySelector(".pricing-machine-setup").addEventListener("input",recalculatePricing);
+      row.querySelector(".remove-pricing-line").addEventListener("click",()=>{row.remove();updatePricingEmptyLabels();recalculatePricing();});
+      updatePricingEmptyLabels();recalculatePricing();
+    }
+
+    function updatePricingEmptyLabels(){
+      $("pricingMaterialsEmpty").classList.toggle("hidden",$("pricingMaterialsList").children.length>0);
+      $("pricingMachinesEmpty").classList.toggle("hidden",$("pricingMachinesList").children.length>0);
+    }
+
+    function collectPricingLines(){
+      const materialLines=[...document.querySelectorAll(".pricing-material-line")].map(row=>({
+        material:materialsCache.find(m=>m.id===row.querySelector(".pricing-material-select").value),
+        quantity:Number(row.querySelector(".pricing-material-qty").value||0)
+      })).filter(x=>x.material&&x.quantity>0);
+      const machineLines=[...document.querySelectorAll(".pricing-machine-line")].map(row=>({
+        machine:machinesCache.find(m=>m.id===row.querySelector(".pricing-machine-select").value),
+        minutes:Number(row.querySelector(".pricing-machine-minutes").value||0),
+        setup:Number(row.querySelector(".pricing-machine-setup").value||0)
+      })).filter(x=>x.machine&&(x.minutes>0||x.setup>0));
+      return {materialLines,machineLines};
+    }
+
+    function recalculatePricing(){ return calculatePricingValues(false); }
+
+    function calculatePricingValues(showValidation=false){
+      const {materialLines,machineLines}=collectPricingLines();
+      const materialBase=materialLines.reduce((sum,x)=>sum+Number(x.material.cost_per_unit||0)*x.quantity,0);
+      const wastePercent=Number($("priceWastePercent").value||0);
+      const wasteCost=materialBase*wastePercent/100;
+      const materialsCost=materialBase+wasteCost;
+      const machinesCost=machineLines.reduce((sum,x)=>sum+((x.minutes+x.setup)/60)*machineOperatingCosts(x.machine).total,0);
+      const laborMinutes=Number($("priceLaborMinutes").value||0);
+      const hourlyRate=Number($("priceHourlyRate").value||0);
+      const laborCost=(laborMinutes/60)*hourlyRate;
+      const otherCosts=Number($("priceOtherCosts").value||0);
+      const totalCost=materialsCost+machinesCost+laborCost+otherCosts;
+      const margin=Number($("priceMarginPercent").value||0);
+      const price=margin>=100?NaN:(totalCost/(1-margin/100));
+      const salePrice=Number.isFinite(price)?Math.round((price+Number.EPSILON)*100)/100:NaN;
+      const profit=Number.isFinite(salePrice)?Math.round((salePrice-totalCost+Number.EPSILON)*100)/100:NaN;
+      pricingLastCalculation={materialLines,machineLines,materialBase,wastePercent,wasteCost,materialsCost,machinesCost,laborMinutes,hourlyRate,laborCost,otherCosts,totalCost,margin,salePrice,profit};
+      $("resultMaterialsCost").textContent=fmtMoney(materialsCost);
+      $("resultMachinesCost").textContent=fmtMoney(machinesCost);
+      $("resultLaborCost").textContent=fmtMoney(laborCost);
+      $("resultOtherCost").textContent=fmtMoney(otherCosts);
+      $("resultTotalCost").textContent=fmtMoney(totalCost);
+      $("resultSalePrice").textContent=Number.isFinite(salePrice)?fmtMoney(salePrice):"Margem inválida";
+      $("resultProfit").textContent=Number.isFinite(profit)?fmtMoney(profit):"—";
+      if(showValidation){
+        if(margin<0||margin>=100||wastePercent<0||wastePercent>100||hourlyRate<0||otherCosts<0||laborMinutes<0){
+          message($("pricingCalculationMessage"),"Confira margem (0 a menos de 100%), desperdício (0–100%) e custos não negativos.","error");
+        }else if(laborMinutes>0&&hourlyRate===0){
+          message($("pricingCalculationMessage"),"Atenção: há tempo de trabalho, mas o valor da sua hora está em R$ 0,00. A mão de obra não está entrando no custo.","info");
+        }else if(totalCost===0){
+          message($("pricingCalculationMessage"),"Informe materiais, equipamento, mão de obra ou outros custos para obter um preço com base no custo.","info");
+        }else{
+          message($("pricingCalculationMessage"),`Cálculo atualizado. Custo de ${fmtMoney(totalCost)}; preço sugerido ${fmtMoney(salePrice)}; lucro estimado ${fmtMoney(profit)} por unidade.`,"success");
+        }
+      }
+      return pricingLastCalculation;
+    }
+
+    async function loadPricingData(){
+      if(!currentUser)return;
+      try{
+        // Reaproveita os materiais/equipamentos cadastrados em suas abas.
+        await Promise.all([loadMaterials(),loadMachines()]);
+        if(!pricingSettingsLoaded){
+          const {data,error}=await supabaseClient.from("pricing_settings").select("hourly_rate,default_margin,default_waste,fixed_cost_percent").eq("user_id",currentUser.id).maybeSingle();
+          if(error){console.warn("Configurações de precificação ainda não disponíveis:",error.message);}else if(data){
+            $("priceHourlyRate").value=Number(data.hourly_rate||0);
+            $("priceMarginPercent").value=data.default_margin??50;
+            $("priceWastePercent").value=data.default_waste??5;
+          }
+          pricingSettingsLoaded=true;
+        }
+        recalculatePricing();
+        await loadProducts();
+      }catch(err){console.error("Load pricing data:",err);message($("pricingFeedback"),"Não foi possível carregar os dados para precificação: "+(err.message||"erro de conexão"),"error");}
+    }
+
+    async function loadProducts(){
+      if(!currentUser)return;
+      $("productsStatus").textContent="Carregando produtos...";
+      try{
+        const {data,error}=await supabaseClient.from("products").select("id,name,category,product_type,cost,sale_price,profit_margin,production_time_minutes,waste_percent,created_at,active").eq("active",true).order("created_at",{ascending:false}).limit(100);
+        if(error)throw error;
+        productsCache=data||[];
+        const body=$("productsTableBody");
+        if(!productsCache.length){body.innerHTML='<tr><td colspan="6" class="empty">Ainda não há produtos salvos. Use a calculadora para criar o primeiro.</td></tr>';}
+        else body.innerHTML=productsCache.map(p=>{
+          const profit=Number(p.sale_price||0)-Number(p.cost||0);
+          return `<tr><td><strong>${escapeHtml(p.name)}</strong><span class="sub">${p.product_type==="service"?"Serviço":"Produto"}</span></td><td>${escapeHtml(p.category||"—")}</td><td>${fmtMoney(p.cost)}</td><td><strong>${fmtMoney(p.sale_price)}</strong><span class="sub">Margem cadastrada: ${fmtQty(p.profit_margin)}%</span></td><td>${fmtMoney(profit)}</td><td><button class="btn btn-danger" type="button" data-deactivate-product="${escapeHtml(p.id)}">Desativar</button></td></tr>`;
+        }).join("");
+        body.querySelectorAll("button[data-deactivate-product]").forEach(btn=>btn.addEventListener("click",()=>deactivateProduct(btn.dataset.deactivateProduct)));
+        $("productsStatus").textContent=productsCache.length+" produto(s) ativo(s) exibido(s).";
+      }catch(err){
+        console.error("Load products:",err);
+        $("productsStatus").textContent="Não foi possível carregar produtos: "+(err.message||"erro de conexão");
+      }
+    }
+
+    async function deactivateProduct(id){
+      const product=productsCache.find(p=>p.id===id);if(!product)return;
+      if(!confirm(`Desativar “${product.name}”? O histórico será preservado.`))return;
+      const {error}=await supabaseClient.from("products").update({active:false,updated_at:new Date().toISOString()}).eq("id",id);
+      if(error){message($("pricingFeedback"),"Não foi possível desativar o produto: "+error.message,"error");return;}
+      message($("pricingFeedback"),"Produto desativado. O histórico foi preservado.","success");await loadProducts();
+    }
+
+    async function persistPricingSettings(){
+      const payload={user_id:currentUser.id,hourly_rate:Number($("priceHourlyRate").value||0),default_margin:Number($("priceMarginPercent").value||0),default_waste:Number($("priceWastePercent").value||0),fixed_cost_percent:0,updated_at:new Date().toISOString()};
+      const {error}=await supabaseClient.from("pricing_settings").upsert(payload,{onConflict:"user_id"});
+      if(error)throw error;
+      pricingSettingsLoaded=true;
+    }
+
+    async function savePricedProduct(){
+      clearMsg($("pricingFeedback"));
+      const calc=calculatePricingValues(true);
+      const name=$("priceProductName").value.trim();
+      if(!name){message($("pricingFeedback"),"Informe o nome do produto.","error");return;}
+      if(!Number.isFinite(calc.salePrice)||calc.margin<0||calc.margin>=100||calc.wastePercent<0||calc.wastePercent>100){message($("pricingFeedback"),"Confira os valores da margem e do desperdício.","error");return;}
+      if(calc.totalCost<=0||calc.salePrice<=0){message($("pricingFeedback"),"O custo calculado é zero. Informe os materiais e/ou custos antes de salvar o produto.","error");return;}
+      const btn=$("savePricedProductButton");btn.disabled=true;btn.textContent="Salvando produto...";
+      const payload={user_id:currentUser.id,name,description:$("priceProductDescription").value.trim()||null,category:$("priceProductCategory").value.trim()||null,product_type:$("priceProductType").value,cost:Math.round((calc.totalCost+Number.EPSILON)*100)/100,sale_price:calc.salePrice,profit_margin:calc.margin,production_time_minutes:Math.round(calc.laborMinutes),waste_percent:calc.wastePercent,stock_quantity:0,active:true,updated_at:new Date().toISOString()};
+      let productId=null;
+      try{
+        const {data,error}=await supabaseClient.from("products").insert(payload).select("id").single();
+        if(error)throw error;
+        productId=data.id;
+        const aggregated=new Map();
+        for(const line of calc.materialLines){aggregated.set(line.material.id,(aggregated.get(line.material.id)||0)+line.quantity);}
+        const materialRows=[...aggregated.entries()].map(([material_id,quantity])=>({user_id:currentUser.id,product_id:productId,material_id,quantity}));
+        if(materialRows.length){const {error:materialError}=await supabaseClient.from("product_materials").insert(materialRows);if(materialError)throw materialError;}
+        const machineRows=calc.machineLines.map(line=>({user_id:currentUser.id,product_id:productId,machine_id:line.machine.id,minutes_per_unit:line.minutes,setup_minutes:line.setup,notes:null}));
+        if(machineRows.length){const {error:machineError}=await supabaseClient.from("product_machine_usage").insert(machineRows);if(machineError)throw machineError;}
+        let settingsWarning="";
+        try{await persistPricingSettings();}catch(settingsError){console.warn("Configurações não salvas:",settingsError.message);settingsWarning=" O produto foi salvo, mas as configurações padrão não puderam ser memorizadas.";}
+        message($("pricingFeedback"),"Produto e ficha técnica salvos com sucesso."+settingsWarning,"success");
+        await loadProducts();
+      }catch(err){
+        console.error("Save priced product:",err);
+        if(productId){try{await supabaseClient.from("products").delete().eq("id",productId);}catch(cleanupError){console.error("Rollback de produto falhou:",cleanupError);}}
+        message($("pricingFeedback"),"Não foi possível salvar o produto: "+(err.message||"erro desconhecido")+". Confira permissões de products, product_materials e product_machine_usage.","error");
+      }finally{btn.disabled=false;btn.textContent="Salvar produto e ficha técnica";}
+    }
+
+    $("addPricingMaterialButton").addEventListener("click",()=>addPricingMaterialLine());
+    $("addPricingMachineButton").addEventListener("click",()=>addPricingMachineLine());
+    $("recalculatePriceButton").addEventListener("click",()=>calculatePricingValues(true));
+    $("pricingForm").addEventListener("input",e=>{if(e.target.id!=="priceProductName"&&e.target.id!=="priceProductCategory"&&e.target.id!=="priceProductDescription")recalculatePricing();});
+    $("pricingForm").addEventListener("change",recalculatePricing);
+    $("pricingForm").addEventListener("submit",async e=>{e.preventDefault();await savePricedProduct();});
+    $("refreshProductsButton").addEventListener("click",loadProducts);
 
     supabaseClient.auth.onAuthStateChange((event,session)=>{
       if(event==="PASSWORD_RECOVERY"){recoveryMode=true;recoveryCompleted=false;showReset();return;}
