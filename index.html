@@ -64,21 +64,27 @@
   <section id="appScreen" class="hidden">
     <header><div><h1>Arte Criativa Estúdio</h1><p>Gestão do Estúdio</p></div><div class="header-right"><button class="btn-logout" id="logoutButton" type="button">Sair</button></div></header>
     <nav class="nav" aria-label="Menu principal">
-      <button type="button" class="active" data-view="dashboardView">Visão geral</button>
+      <button type="button" data-view="dashboardView">Visão geral</button>
       <button type="button" data-view="materialsView">Materiais e insumos</button>
       <button type="button" data-view="machinesView">Equipamentos</button>
       <button type="button" data-view="pricingView">Precificação</button>
+      <button type="button" data-view="productsView">Produtos</button>
+      <button type="button" data-view="clientsView">Clientes</button>
+      <button type="button" data-view="ordersView">Pedidos</button>
+      <button type="button" data-view="servicesView">Foto e filmagem</button>
+      <button type="button" data-view="financeView">Financeiro</button>
+      <button type="button" data-view="reportsView">Relatórios</button>
     </nav>
     <main>
       <section id="dashboardView">
         <div class="welcome"><h2>Bem-vinda ao seu sistema!</h2><p id="userEmail"></p></div>
         <div class="cards">
-          <article class="card"><h3>💰 Faturamento</h3><p>Vendas realizadas</p><div class="value">R$ 0,00</div></article>
-          <article class="card"><h3>📈 Lucro</h3><p>Resultado financeiro</p><div class="value">R$ 0,00</div></article>
-          <article class="card"><h3>📋 Pedidos</h3><p>Pedidos em andamento</p><div class="value">0</div></article>
-          <article class="card"><h3>💵 A receber</h3><p>Valores pendentes</p><div class="value">R$ 0,00</div></article>
+          <article class="card"><h3>💰 Recebido no mês</h3><p>Entradas pagas neste mês</p><div class="value" id="dashboardRevenue">R$ 0,00</div></article>
+          <article class="card"><h3>📈 Resultado do mês</h3><p>Recebido menos despesas pagas</p><div class="value" id="dashboardProfit">R$ 0,00</div></article>
+          <article class="card"><h3>📋 Pedidos ativos</h3><p>Pedidos não concluídos</p><div class="value" id="dashboardOrders">0</div></article>
+          <article class="card"><h3>💵 A receber</h3><p>Receitas em aberto</p><div class="value" id="dashboardReceivable">R$ 0,00</div></article>
         </div>
-        <div class="notice"><strong>Importante:</strong> os indicadores acima ainda são demonstrativos. A conexão do financeiro será implementada em uma etapa posterior.</div>
+        <div class="notice"><strong>Painel financeiro:</strong> os indicadores são calculados a partir dos lançamentos registrados. O resultado gerencial não substitui a contabilidade e pode não incluir custos ainda não registrados.</div>
       </section>
 
       <section id="materialsView" class="hidden">
@@ -214,7 +220,7 @@
           </section>
 
           <section class="panel">
-            <div class="section-head"><div><h3 style="margin-bottom:0">3. Equipamentos utilizados</h3><p>Informe o tempo TOTAL usado para produzir o lote. Ex.: 68 minutos para 7 peças.</p></div><button class="btn btn-outline" type="button" id="addPricingMachineButton">+ Adicionar equipamento</button></div>
+            <div class="section-head"><div><h3 style="margin-bottom:0">3. Equipamentos utilizados</h3><p>Informe o tempo TOTAL usado pelo equipamento para produzir o lote no formato horas:minutos. Ex.: 1:08 significa 1 hora e 8 minutos para o lote inteiro.</p></div><button class="btn btn-outline" type="button" id="addPricingMachineButton">+ Adicionar equipamento</button></div>
             <div id="pricingMachinesList"></div>
             <div id="pricingMachinesEmpty" class="empty">Nenhum equipamento adicionado. Clique em “Adicionar equipamento”.</div>
           </section>
@@ -250,6 +256,56 @@
           <div id="productsStatus" class="status-line"></div>
           <div class="table-wrap"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Custo registrado</th><th>Preço de venda</th><th>Lucro estimado</th><th>Ação</th></tr></thead><tbody id="productsTableBody"><tr><td colspan="6" class="empty">Nenhum produto carregado.</td></tr></tbody></table></div>
         </section>
+      </section>
+
+      <section id="productsView" class="hidden">
+        <div class="section-head"><div><h2>Produtos</h2><p>Produtos e serviços salvos pela calculadora de precificação.</p></div><button class="btn btn-primary" type="button" id="goToPricingButton">+ Precificar produto</button></div>
+        <div id="productsDirectoryFeedback" class="message" role="status" aria-live="polite"></div>
+        <section class="panel"><div class="search-row"><input id="productSearch" type="search" placeholder="Buscar produto ou categoria..."><button class="btn btn-outline" id="refreshProductDirectoryButton" type="button">Atualizar</button></div><div id="productDirectoryStatus" class="status-line"></div><div class="table-wrap"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Custo/unit.</th><th>Preço/unit.</th><th>Lucro estimado</th><th>Ação</th></tr></thead><tbody id="productDirectoryBody"><tr><td colspan="6" class="empty">Carregando produtos...</td></tr></tbody></table></div></section>
+      </section>
+
+      <section id="clientsView" class="hidden">
+        <div class="section-head"><div><h2>Clientes</h2><p>Cadastre os clientes e consulte seus dados para pedidos e agendamentos.</p></div><button class="btn btn-primary" id="newClientButton" type="button">+ Novo cliente</button></div>
+        <div id="clientsFeedback" class="message" role="status" aria-live="polite"></div>
+        <section id="clientFormPanel" class="panel hidden"><h3 id="clientFormTitle">Novo cliente</h3><form id="clientForm"><input type="hidden" id="clientId"><div class="form-grid">
+          <div class="field"><label for="clientName">Nome *</label><input id="clientName" required></div><div class="field"><label for="clientPhone">Telefone</label><input id="clientPhone"></div><div class="field"><label for="clientWhatsapp">WhatsApp</label><input id="clientWhatsapp"></div><div class="field"><label for="clientEmail">E-mail</label><input id="clientEmail" type="email"></div><div class="field"><label for="clientCpf">CPF/CNPJ (opcional)</label><input id="clientCpf"></div><div class="field"><label for="clientCity">Cidade</label><input id="clientCity"></div><div class="field span-2"><label for="clientAddress">Endereço</label><input id="clientAddress"></div><div class="field span-3"><label for="clientNotes">Observações</label><textarea id="clientNotes"></textarea></div>
+        </div><div class="form-actions"><button class="btn btn-primary" id="saveClientButton" type="submit">Salvar cliente</button><button class="btn btn-outline" id="cancelClientButton" type="button">Cancelar</button></div></form></section>
+        <section class="panel"><div class="search-row"><input id="clientSearch" type="search" placeholder="Buscar cliente por nome, telefone ou e-mail"><button class="btn btn-outline" id="refreshClientsButton" type="button">Atualizar</button></div><div id="clientsStatus" class="status-line"></div><div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Contato</th><th>Cidade</th><th>Observações</th><th>Ação</th></tr></thead><tbody id="clientsTableBody"><tr><td colspan="5" class="empty">Carregando clientes...</td></tr></tbody></table></div></section>
+      </section>
+
+      <section id="ordersView" class="hidden">
+        <div class="section-head"><div><h2>Pedidos e orçamentos</h2><p>Registre a encomenda, o prazo, o valor contratado e os pagamentos. Nesta versão, cada pedido pode conter um produto/serviço principal.</p></div><button class="btn btn-primary" id="newOrderButton" type="button">+ Novo pedido</button></div>
+        <div id="ordersFeedback" class="message" role="status" aria-live="polite"></div>
+        <section id="orderFormPanel" class="panel hidden"><h3>Novo pedido / orçamento</h3><form id="orderForm"><div class="form-grid">
+          <div class="field span-2"><label for="orderClient">Cliente</label><select id="orderClient"><option value="">Sem cliente vinculado</option></select></div><div class="field"><label for="orderStatus">Status</label><select id="orderStatus"><option value="budget">Orçamento</option><option value="awaiting_payment">Aguardando pagamento</option><option value="confirmed">Confirmado</option><option value="production">Em produção</option><option value="ready">Pronto</option><option value="delivered">Entregue</option><option value="cancelled">Cancelado</option></select></div>
+          <div class="field span-2"><label for="orderProduct">Produto/serviço *</label><select id="orderProduct" required><option value="">Selecione um produto salvo</option></select></div><div class="field"><label for="orderQuantity">Quantidade *</label><input id="orderQuantity" type="number" min="0.001" step="0.001" value="1" required></div><div class="field"><label for="orderUnitPrice">Preço unitário (R$) *</label><input id="orderUnitPrice" type="number" min="0" step="0.01" required></div><div class="field"><label for="orderDiscount">Desconto total (R$)</label><input id="orderDiscount" type="number" min="0" step="0.01" value="0"></div><div class="field"><label for="orderAmountPaid">Entrada já recebida (R$)</label><input id="orderAmountPaid" type="number" min="0" step="0.01" value="0"></div><div class="field"><label for="orderDeliveryDate">Data de entrega prevista</label><input id="orderDeliveryDate" type="date"></div><div class="field"><label for="orderDueDate">Vencimento do saldo</label><input id="orderDueDate" type="date"></div><div class="field"><label for="orderPaymentMethod">Forma de pagamento da entrada</label><select id="orderPaymentMethod"><option value="pix">Pix</option><option value="cash">Dinheiro</option><option value="debit">Débito</option><option value="credit">Crédito</option><option value="bank_transfer">Transferência</option><option value="boleto">Boleto</option><option value="other">Outro</option></select></div><div class="field span-3"><label for="orderNotes">Observações / personalização</label><textarea id="orderNotes"></textarea></div>
+        </div><div class="notice" id="orderTotalsPreview">Total do pedido: R$ 0,00 • Saldo a receber: R$ 0,00</div><div class="form-actions"><button class="btn btn-primary" id="saveOrderButton" type="submit">Salvar pedido</button><button class="btn btn-outline" id="cancelOrderButton" type="button">Cancelar</button></div></form></section>
+        <section class="panel"><div class="search-row"><input id="orderSearch" type="search" placeholder="Buscar por número, cliente ou status"><button class="btn btn-outline" id="refreshOrdersButton" type="button">Atualizar</button></div><div id="ordersStatus" class="status-line"></div><div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente/produto</th><th>Prazo</th><th>Total</th><th>Pago / saldo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="ordersTableBody"><tr><td colspan="7" class="empty">Nenhum pedido carregado.</td></tr></tbody></table></div></section>
+      </section>
+
+      <section id="servicesView" class="hidden">
+        <div class="section-head"><div><h2>Fotografia e filmagem</h2><p>Agenda simples para ensaios, eventos, filmagens, drone e outros serviços.</p></div><button class="btn btn-primary" id="newServiceButton" type="button">+ Agendar serviço</button></div>
+        <div id="servicesFeedback" class="message" role="status" aria-live="polite"></div>
+        <section id="serviceFormPanel" class="panel hidden"><h3>Novo agendamento</h3><form id="serviceForm"><div class="form-grid">
+          <div class="field span-2"><label for="serviceClient">Cliente</label><select id="serviceClient"><option value="">Sem cliente vinculado</option></select></div><div class="field"><label for="serviceType">Tipo de serviço *</label><select id="serviceType" required><option>Ensaio fotográfico</option><option>Fotografia de evento</option><option>Filmagem</option><option>Filmagem com drone</option><option>Fotografia e filmagem</option><option>Impressão de fotos</option><option>Outro</option></select></div><div class="field"><label for="serviceDate">Data *</label><input id="serviceDate" type="date" required></div><div class="field"><label for="serviceStartTime">Horário de início *</label><input id="serviceStartTime" type="time" required></div><div class="field"><label for="serviceDuration">Duração (minutos) *</label><input id="serviceDuration" type="number" min="1" step="1" value="60" required></div><div class="field"><label for="serviceValue">Valor contratado (R$) *</label><input id="serviceValue" type="number" min="0" step="0.01" value="0" required></div><div class="field"><label for="serviceReceived">Valor já recebido (R$)</label><input id="serviceReceived" type="number" min="0" step="0.01" value="0"></div><div class="field"><label for="serviceStatus">Status</label><select id="serviceStatus"><option value="scheduled">Agendado</option><option value="completed">Concluído</option><option value="cancelled">Cancelado</option><option value="no_show">Cliente não compareceu</option></select></div><div class="field span-3"><label for="serviceNotes">Observações</label><textarea id="serviceNotes" placeholder="Local, tipo de entrega, detalhes do evento... "></textarea></div>
+        </div><div class="form-actions"><button class="btn btn-primary" id="saveServiceButton" type="submit">Salvar agendamento</button><button class="btn btn-outline" id="cancelServiceButton" type="button">Cancelar</button></div></form></section>
+        <section class="panel"><div class="search-row"><input id="serviceSearch" type="search" placeholder="Buscar por tipo de serviço, cliente ou data"><button class="btn btn-outline" id="refreshServicesButton" type="button">Atualizar agenda</button></div><div id="servicesStatus" class="status-line"></div><div class="table-wrap"><table><thead><tr><th>Data e horário</th><th>Serviço/cliente</th><th>Duração</th><th>Valor</th><th>Recebido / saldo</th><th>Status</th><th>Ações</th></tr></thead><tbody id="servicesTableBody"><tr><td colspan="7" class="empty">Nenhum serviço carregado.</td></tr></tbody></table></div></section>
+      </section>
+
+      <section id="financeView" class="hidden">
+        <div class="section-head"><div><h2>Financeiro</h2><p>Registre entradas, despesas, recebimentos e valores em aberto. Os lançamentos ligados a pedidos e serviços são criados automaticamente.</p></div></div>
+        <div id="financeFeedback" class="message" role="status" aria-live="polite"></div>
+        <section class="panel"><h3>Novo lançamento financeiro</h3><form id="financeForm"><div class="form-grid">
+          <div class="field"><label for="financeType">Tipo *</label><select id="financeType"><option value="income">Entrada / receita</option><option value="expense">Saída / despesa</option></select></div><div class="field span-2"><label for="financeDescription">Descrição *</label><input id="financeDescription" required placeholder="Ex.: Compra de papel, anúncio, venda avulsa"></div><div class="field"><label for="financeCategory">Categoria</label><input id="financeCategory" placeholder="Ex.: Material, transporte, venda"></div><div class="field"><label for="financeAmount">Valor (R$) *</label><input id="financeAmount" type="number" min="0.01" step="0.01" required></div><div class="field"><label for="financeStatus">Situação</label><select id="financeStatus"><option value="paid">Pago/recebido</option><option value="open">Em aberto</option></select></div><div class="field"><label for="financeDueDate">Vencimento</label><input id="financeDueDate" type="date"></div><div class="field"><label for="financePaidDate">Data de pagamento/recebimento</label><input id="financePaidDate" type="date"></div><div class="field"><label for="financePaymentMethod">Forma de pagamento</label><select id="financePaymentMethod"><option value="pix">Pix</option><option value="cash">Dinheiro</option><option value="debit">Débito</option><option value="credit">Crédito</option><option value="bank_transfer">Transferência</option><option value="boleto">Boleto</option><option value="other">Outro</option></select></div><div class="field span-3"><label for="financeNotes">Observações</label><textarea id="financeNotes"></textarea></div>
+        </div><div class="form-actions"><button class="btn btn-primary" id="saveFinanceButton" type="submit">Salvar lançamento</button></div></form></section>
+        <section class="panel"><div class="section-head"><div><h3 style="margin-bottom:0">Lançamentos</h3><p>Marque despesas/receitas em aberto como pagas quando o dinheiro sair ou entrar.</p></div><button class="btn btn-outline" id="refreshFinanceButton" type="button">Atualizar</button></div><div id="financeStatusLine" class="status-line"></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Tipo / descrição</th><th>Categoria</th><th>Valor</th><th>Situação</th><th>Pagamento</th><th>Ações</th></tr></thead><tbody id="financeTableBody"><tr><td colspan="7" class="empty">Nenhum lançamento.</td></tr></tbody></table></div></section>
+      </section>
+
+      <section id="reportsView" class="hidden">
+        <div class="section-head"><div><h2>Relatórios</h2><p>Resumo dos lançamentos financeiros registrados no sistema.</p></div><button class="btn btn-outline" id="exportFinanceCsvButton" type="button">Exportar financeiro CSV</button></div>
+        <div id="reportsFeedback" class="message" role="status" aria-live="polite"></div>
+        <div class="cards"><article class="card"><h3>Recebido</h3><p>Entradas pagas</p><div class="value" id="reportIncome">R$ 0,00</div></article><article class="card"><h3>Despesas pagas</h3><p>Saídas pagas</p><div class="value" id="reportExpenses">R$ 0,00</div></article><article class="card"><h3>Resultado</h3><p>Recebido menos despesas pagas</p><div class="value" id="reportNet">R$ 0,00</div></article><article class="card"><h3>Em aberto</h3><p>Receitas ainda não recebidas</p><div class="value" id="reportOpen">R$ 0,00</div></article></div>
+        <section class="panel" style="margin-top:20px"><h3>Observações sobre os relatórios</h3><p class="small">Os resultados dependem dos lançamentos registrados. O custo e lucro estimados dos produtos não são iguais ao saldo bancário. Registre compras/despesas e recebimentos para manter os relatórios úteis. Esta tela é gerencial e não substitui a contabilidade.</p></section>
       </section>
     </main>
     <div class="footer">Arte Criativa Estúdio • Sistema de Gestão</div>
@@ -292,7 +348,7 @@
     function showLogin(){ hideAllScreens(); $("loginScreen").classList.remove("hidden"); }
     function showForgot(){ hideAllScreens(); $("forgotScreen").classList.remove("hidden"); const email=$("loginEmail").value.trim(); if(email) $("forgotEmail").value=email; clearMsg($("forgotMessage")); }
     function showReset(){ hideAllScreens(); $("resetScreen").classList.remove("hidden"); }
-    const VALID_VIEWS = ["dashboardView", "materialsView", "machinesView", "pricingView"];
+    const VALID_VIEWS = ["dashboardView", "materialsView", "machinesView", "pricingView", "productsView", "clientsView", "ordersView", "servicesView", "financeView", "reportsView"];
     const LAST_VIEW_KEY_PREFIX = "arteCriativa:lastView:";
 
     function getSavedView(userId){
@@ -328,12 +384,19 @@
 
     function switchView(viewId){
       if(!VALID_VIEWS.includes(viewId)) viewId = "dashboardView";
-      ["dashboardView","materialsView","machinesView","pricingView"].forEach(id=>$(id).classList.toggle("hidden",id!==viewId));
+      VALID_VIEWS.forEach(id=>$(id).classList.toggle("hidden",id!==viewId));
       document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.view===viewId));
       saveCurrentView(viewId);
+      if(viewId==="dashboardView") loadDashboard();
       if(viewId==="materialsView") loadMaterials();
       if(viewId==="machinesView") loadMachines();
       if(viewId==="pricingView") loadPricingData();
+      if(viewId==="productsView") loadProducts();
+      if(viewId==="clientsView") loadClients();
+      if(viewId==="ordersView") { loadClients(); loadProducts(); loadOrders(); }
+      if(viewId==="servicesView") { loadClients(); loadServices(); }
+      if(viewId==="financeView") loadFinance();
+      if(viewId==="reportsView") loadReports();
     }
     document.querySelectorAll(".nav button[data-view]").forEach(btn=>btn.addEventListener("click",()=>switchView(btn.dataset.view)));
 
@@ -405,10 +468,11 @@
           <td>${escapeHtml(m.color||"—")}<span class="sub">${escapeHtml(m.finish||"")}</span></td>
           <td>${fmtMoney(m.cost_per_unit)} <span class="sub">por ${escapeHtml(unitLabel(unit))}</span></td>
           <td><span class="${low?"stock-low":"stock-ok"}">${fmtQty(stock)} ${escapeHtml(unitLabel(unit))}</span>${min>0?'<span class="sub">Mínimo: '+fmtQty(min)+'</span>':""}</td>
-          <td><button class="btn btn-outline" data-purchase="${escapeHtml(m.id)}" type="button">Registrar compra</button><button class="btn btn-danger" data-disable="${escapeHtml(m.id)}" type="button" style="margin-top:6px">Desativar</button></td>
+          <td><button class="btn btn-outline" data-purchase="${escapeHtml(m.id)}" type="button">Registrar compra</button><button class="btn btn-outline" data-consume="${escapeHtml(m.id)}" type="button" style="margin-top:6px">Registrar consumo</button><button class="btn btn-danger" data-disable="${escapeHtml(m.id)}" type="button" style="margin-top:6px">Desativar</button></td>
         </tr>`;
       }).join("");
       body.querySelectorAll("button[data-purchase]").forEach(btn=>btn.addEventListener("click",()=>openPurchasePanel(btn.dataset.purchase)));
+      body.querySelectorAll("button[data-consume]").forEach(btn=>btn.addEventListener("click",()=>recordMaterialConsumption(btn.dataset.consume)));
       body.querySelectorAll("button[data-disable]").forEach(btn=>btn.addEventListener("click",()=>deactivateMaterial(btn.dataset.disable)));
     }
 
@@ -700,10 +764,20 @@
       row.querySelector(".pricing-material-unit").textContent=m?`Custo: ${fmtMoney(m.cost_per_unit)} por ${unitLabel(m.base_unit||m.unit)}. Estoque disponível: ${fmtQty(m.stock_quantity)}.`:"Selecione o material.";
     }
 
-    function addPricingMachineLine(selectedId="", minutes="0", setup="0"){
+    // Converte o formato H:MM (ex.: 1:08 = 68 minutos) em minutos totais.
+    // Retorna null quando o conteúdo está inválido para evitar ignorar o tempo sem aviso.
+    function parseHoursMinutes(value){
+      const text=String(value??"").trim();
+      if(text==="")return 0;
+      const match=text.match(/^(\d{1,3}):([0-5]\d)$/);
+      if(!match)return null;
+      return Number(match[1])*60+Number(match[2]);
+    }
+
+    function addPricingMachineLine(selectedId="", minutes="0:00", setup="0"){
       const row=document.createElement("div");
       row.className="pricing-line pricing-machine-line";
-      row.innerHTML=`<div class="form-grid"><div class="field span-2"><label>Equipamento</label><select class="pricing-machine-select">${machineOptionsHtml(selectedId)}</select></div><div class="field"><label>Minutos totais no lote</label><input class="pricing-machine-minutes" type="number" min="0" step="0.1" value="${escapeHtml(minutes)}"></div><div class="field"><label>Preparação total do lote (min)</label><input class="pricing-machine-setup" type="number" min="0" step="0.1" value="${escapeHtml(setup)}"></div></div><div class="form-actions"><button class="btn btn-danger remove-pricing-line" type="button">Remover equipamento</button></div>`;
+      row.innerHTML=`<div class="form-grid"><div class="field span-2"><label>Equipamento</label><select class="pricing-machine-select">${machineOptionsHtml(selectedId)}</select></div><div class="field"><label>Tempo total de uso no lote (H:MM)</label><input class="pricing-machine-minutes" type="text" inputmode="numeric" placeholder="1:08" pattern="\\d{1,3}:[0-5]\\d" value="${escapeHtml(minutes)}" aria-label="Tempo total de uso do equipamento no lote no formato horas e minutos"><span class="sub">Ex.: 1:08 = 1 hora e 8 minutos.</span></div><div class="field"><label>Preparação total do lote (minutos)</label><input class="pricing-machine-setup" type="number" min="0" step="0.1" value="${escapeHtml(setup)}"></div></div><div class="form-actions"><button class="btn btn-danger remove-pricing-line" type="button">Remover equipamento</button></div>`;
       $("pricingMachinesList").appendChild(row);
       row.querySelector(".pricing-machine-select").addEventListener("change",recalculatePricing);
       row.querySelector(".pricing-machine-minutes").addEventListener("input",recalculatePricing);
@@ -722,18 +796,27 @@
         material:materialsCache.find(m=>m.id===row.querySelector(".pricing-material-select").value),
         quantity:Number(row.querySelector(".pricing-material-qty").value||0)
       })).filter(x=>x.material&&x.quantity>0);
-      const machineLines=[...document.querySelectorAll(".pricing-machine-line")].map(row=>({
-        machine:machinesCache.find(m=>m.id===row.querySelector(".pricing-machine-select").value),
-        minutes:Number(row.querySelector(".pricing-machine-minutes").value||0),
-        setup:Number(row.querySelector(".pricing-machine-setup").value||0)
-      })).filter(x=>x.machine&&(x.minutes>0||x.setup>0));
-      return {materialLines,machineLines};
+
+      const allMachineLines=[...document.querySelectorAll(".pricing-machine-line")].map(row=>{
+        const rawMinutes=row.querySelector(".pricing-machine-minutes").value;
+        const parsedMinutes=parseHoursMinutes(rawMinutes);
+        const machine=machinesCache.find(m=>m.id===row.querySelector(".pricing-machine-select").value);
+        return {
+          machine,
+          minutes:parsedMinutes===null?0:parsedMinutes,
+          invalidTime:!!machine&&parsedMinutes===null,
+          setup:Number(row.querySelector(".pricing-machine-setup").value||0)
+        };
+      });
+      const invalidMachineTime=allMachineLines.some(x=>x.invalidTime);
+      const machineLines=allMachineLines.filter(x=>x.machine&&(x.minutes>0||x.setup>0||x.invalidTime));
+      return {materialLines,machineLines,invalidMachineTime};
     }
 
     function recalculatePricing(){ return calculatePricingValues(false); }
 
     function calculatePricingValues(showValidation=false){
-      const {materialLines,machineLines}=collectPricingLines();
+      const {materialLines,machineLines,invalidMachineTime}=collectPricingLines();
       const batchQuantity=Number($("priceBatchQuantity").value||1);
       const safeBatchQuantity=batchQuantity>0?batchQuantity:1;
 
@@ -772,7 +855,7 @@
         batchQuantity,materialLines,machineLines,materialBase,wastePercent,wasteCost,materialsCost,
         machinesCost,laborMinutes,hourlyRate,laborCost,otherCosts,totalCost,margin,salePrice,profit,
         materialBaseBatch,wasteCostBatch,materialsCostBatch,machinesCostBatch,laborMinutesBatch,
-        laborCostBatch,otherCostsBatch,totalCostBatch,batchSalePrice,batchProfit
+        laborCostBatch,otherCostsBatch,totalCostBatch,batchSalePrice,batchProfit,invalidMachineTime
       };
 
       $("resultMaterialsCost").textContent=fmtMoney(materialsCost);
@@ -787,7 +870,9 @@
       $("resultBatchProfit").textContent=Number.isFinite(batchProfit)?fmtMoney(batchProfit):"—";
 
       if(showValidation){
-        if(!Number.isInteger(batchQuantity)||batchQuantity<1||margin<0||margin>=100||wastePercent<0||wastePercent>100||hourlyRate<0||otherCostsBatch<0||laborMinutesBatch<0){
+        if(invalidMachineTime){
+          message($("pricingCalculationMessage"),"Informe o tempo total do equipamento no formato H:MM, por exemplo 1:08 para 1 hora e 8 minutos.","error");
+        }else if(!Number.isInteger(batchQuantity)||batchQuantity<1||margin<0||margin>=100||wastePercent<0||wastePercent>100||hourlyRate<0||otherCostsBatch<0||laborMinutesBatch<0){
           message($("pricingCalculationMessage"),"Confira a quantidade inteira de unidades no lote, a margem (0 a menos de 100%), o desperdício (0–100%) e os custos não negativos.","error");
         }else if(laborMinutesBatch>0&&hourlyRate===0){
           message($("pricingCalculationMessage"),"Atenção: há tempo de trabalho, mas o valor da sua hora está em R$ 0,00. A mão de obra não está entrando no custo.","info");
@@ -834,6 +919,8 @@
         }).join("");
         body.querySelectorAll("button[data-deactivate-product]").forEach(btn=>btn.addEventListener("click",()=>deactivateProduct(btn.dataset.deactivateProduct)));
         $("productsStatus").textContent=productsCache.length+" produto(s) ativo(s) exibido(s).";
+        if($("productDirectoryBody")) renderProductDirectory();
+        if($("orderProduct")) populateOrderProducts();
       }catch(err){
         console.error("Load products:",err);
         $("productsStatus").textContent="Não foi possível carregar produtos: "+(err.message||"erro de conexão");
@@ -859,6 +946,7 @@
       clearMsg($("pricingFeedback"));
       const calc=calculatePricingValues(true);
       const name=$("priceProductName").value.trim();
+      if(calc.invalidMachineTime){message($("pricingFeedback"),"Informe o tempo total do equipamento no formato H:MM, por exemplo 1:08 para 1 hora e 8 minutos.","error");return;}
       if(!name){message($("pricingFeedback"),"Informe o nome do produto.","error");return;}
       if(!Number.isInteger(calc.batchQuantity)||calc.batchQuantity<1){message($("pricingFeedback"),"Informe uma quantidade inteira maior que zero para o lote.","error");return;}
       if(!Number.isFinite(calc.salePrice)||calc.margin<0||calc.margin>=100||calc.wastePercent<0||calc.wastePercent>100){message($("pricingFeedback"),"Confira os valores da margem e do desperdício.","error");return;}
@@ -894,6 +982,139 @@
     $("pricingForm").addEventListener("change",recalculatePricing);
     $("pricingForm").addEventListener("submit",async e=>{e.preventDefault();await savePricedProduct();});
     $("refreshProductsButton").addEventListener("click",loadProducts);
+
+
+    // ============================================================
+    // MÓDULOS COMPLEMENTARES: clientes, pedidos, serviços, financeiro
+    // ============================================================
+    let clientsCache = [];
+    let ordersCache = [];
+    let servicesCache = [];
+    let financialCache = [];
+
+    function paymentLabel(value){return ({pix:"Pix",cash:"Dinheiro",debit:"Débito",credit:"Crédito",bank_transfer:"Transferência",boleto:"Boleto",other:"Outro"})[value]||value||"—";}
+    function entryTypeLabel(value){return value==="income"?"Entrada":"Saída";}
+    function entryStatusLabel(value){return ({open:"Em aberto",paid:"Pago/recebido",cancelled:"Cancelado"})[value]||value||"—";}
+    function orderStatusLabel(value){return ({budget:"Orçamento",awaiting_payment:"Aguardando pagamento",confirmed:"Confirmado",production:"Em produção",ready:"Pronto",delivered:"Entregue",cancelled:"Cancelado"})[value]||value||"—";}
+    function bookingStatusLabel(value){return ({scheduled:"Agendado",completed:"Concluído",cancelled:"Cancelado",no_show:"Não compareceu"})[value]||value||"—";}
+    function fmtDate(value){if(!value)return "—";const s=String(value).slice(0,10);const p=s.split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:s;}
+    function clientNameById(id){return clientsCache.find(c=>c.id===id)?.name||"Sem cliente";}
+    function productNameById(id){return productsCache.find(p=>p.id===id)?.name||"Produto/serviço";}
+
+    // Produtos: diretório separado da calculadora para consulta rápida.
+    function renderProductDirectory(){
+      const body=$("productDirectoryBody"); if(!body)return;
+      const q=($("productSearch")?.value||"").trim().toLowerCase();
+      const list=productsCache.filter(p=>[p.name,p.category,p.product_type].some(v=>String(v||"").toLowerCase().includes(q)));
+      if(!list.length){body.innerHTML='<tr><td colspan="6" class="empty">Nenhum produto encontrado. Salve um produto na aba Precificação.</td></tr>';$("productDirectoryStatus").textContent="0 produto(s) ativo(s).";return;}
+      body.innerHTML=list.map(p=>`<tr><td><strong>${escapeHtml(p.name)}</strong><span class="sub">${p.product_type==="service"?"Serviço":"Produto físico"}</span></td><td>${escapeHtml(p.category||"—")}</td><td>${fmtMoney(p.cost)}</td><td><strong>${fmtMoney(p.sale_price)}</strong></td><td>${fmtMoney(Number(p.sale_price||0)-Number(p.cost||0))}</td><td><button class="btn btn-outline" type="button" data-product-price="${escapeHtml(p.id)}">Usar no pedido</button></td></tr>`).join("");
+      body.querySelectorAll("[data-product-price]").forEach(b=>b.addEventListener("click",()=>{switchView("ordersView");setTimeout(()=>{if($("orderProduct")){$("orderProduct").value=b.dataset.productPrice;fillOrderProductPrice();}},350);}));
+      $("productDirectoryStatus").textContent=list.length+" produto(s) ativo(s).";
+    }
+    $("goToPricingButton").addEventListener("click",()=>switchView("pricingView"));
+    $("refreshProductDirectoryButton").addEventListener("click",loadProducts);
+    $("productSearch").addEventListener("input",renderProductDirectory);
+
+    // Consumo manual de insumos (por exemplo, perdas/testes ou utilização avulsa).
+    async function recordMaterialConsumption(id){
+      const material=materialsCache.find(m=>m.id===id);if(!material)return;
+      const raw=prompt(`Estoque disponível: ${fmtQty(material.stock_quantity)} ${unitLabel(material.base_unit||material.unit)}\nQual quantidade foi consumida?`);
+      if(raw===null)return;
+      const qty=Number(raw.replace(",","."));
+      if(!Number.isFinite(qty)||qty<=0){alert("Informe uma quantidade maior que zero.");return;}
+      if(qty>Number(material.stock_quantity||0)){alert("O consumo não pode ser maior que o estoque disponível.");return;}
+      const note=prompt("Observação (opcional):","Consumo manual")||"Consumo manual";
+      try{
+        const {error:moveError}=await supabaseClient.from("inventory_movements").insert({user_id:currentUser.id,material_id:id,movement_type:"consumption",quantity_change:-qty,notes:note});
+        if(moveError)throw moveError;
+        const {error:updateError}=await supabaseClient.from("materials").update({stock_quantity:Number(material.stock_quantity)-qty,updated_at:new Date().toISOString()}).eq("id",id).eq("user_id",currentUser.id);
+        if(updateError)throw updateError;
+        message($("materialsFeedback"),`Consumo de ${fmtQty(qty)} ${unitLabel(material.base_unit||material.unit)} registrado.`,"success");await loadMaterials();
+      }catch(err){console.error(err);message($("materialsFeedback"),"Não foi possível registrar o consumo: "+(err.message||"erro"),"error");}
+    }
+
+    // Clientes
+    async function loadClients(){
+      if(!currentUser)return;
+      $("clientsStatus").textContent="Carregando clientes...";
+      try{
+        const {data,error}=await supabaseClient.from("clients").select("id,name,phone,whatsapp,email,cpf_cnpj,address,city,notes,created_at,updated_at").eq("user_id",currentUser.id).order("name").limit(500);
+        if(error)throw error;clientsCache=data||[];renderClients();populateClientSelects();if(ordersCache.length)renderOrders();if(servicesCache.length)renderServices();
+        $("clientsStatus").textContent=clientsCache.length+" cliente(s) cadastrado(s).";
+      }catch(err){console.error(err);$("clientsStatus").textContent="Não foi possível carregar clientes: "+(err.message||"erro");message($("clientsFeedback"),"Verifique as permissões da tabela clients: "+(err.message||"erro"),"error");}
+    }
+    function renderClients(){
+      const body=$("clientsTableBody");if(!body)return;const q=($("clientSearch")?.value||"").trim().toLowerCase();const list=clientsCache.filter(c=>[c.name,c.phone,c.whatsapp,c.email,c.city].some(v=>String(v||"").toLowerCase().includes(q)));
+      if(!list.length){body.innerHTML='<tr><td colspan="5" class="empty">Nenhum cliente encontrado. Cadastre seu primeiro cliente.</td></tr>';return;}
+      body.innerHTML=list.map(c=>`<tr><td><strong>${escapeHtml(c.name)}</strong><span class="sub">${escapeHtml(c.email||"")}</span></td><td>${escapeHtml(c.phone||c.whatsapp||"—")}<span class="sub">${escapeHtml(c.whatsapp||"")}</span></td><td>${escapeHtml(c.city||"—")}</td><td>${escapeHtml(c.notes||"—")}</td><td><button class="btn btn-outline" data-edit-client="${escapeHtml(c.id)}" type="button">Editar</button></td></tr>`).join("");
+      body.querySelectorAll("[data-edit-client]").forEach(b=>b.addEventListener("click",()=>openClientForm(b.dataset.editClient)));
+    }
+    function populateClientSelects(){
+      const html='<option value="">Sem cliente vinculado</option>'+clientsCache.map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join("");
+      ["orderClient","serviceClient"].forEach(id=>{const el=$(id);if(!el)return;const previous=el.value;el.innerHTML=html;el.value=previous;});
+    }
+    function openClientForm(id=""){
+      const c=id?clientsCache.find(x=>x.id===id):null;$("clientForm").reset();$("clientId").value=c?.id||"";$("clientFormTitle").textContent=c?"Editar cliente":"Novo cliente";
+      $("clientName").value=c?.name||"";$("clientPhone").value=c?.phone||"";$("clientWhatsapp").value=c?.whatsapp||"";$("clientEmail").value=c?.email||"";$("clientCpf").value=c?.cpf_cnpj||"";$("clientCity").value=c?.city||"";$("clientAddress").value=c?.address||"";$("clientNotes").value=c?.notes||"";$("clientFormPanel").classList.remove("hidden");$("clientFormPanel").scrollIntoView({behavior:"smooth",block:"start"});
+    }
+    $("newClientButton").addEventListener("click",()=>openClientForm());
+    $("cancelClientButton").addEventListener("click",()=>$ ("clientFormPanel").classList.add("hidden"));
+    $("refreshClientsButton").addEventListener("click",loadClients);
+    $("clientSearch").addEventListener("input",renderClients);
+    $("clientForm").addEventListener("submit",async e=>{
+      e.preventDefault();message($("clientsFeedback"),"Salvando cliente...","info");const id=$("clientId").value;
+      const payload={name:$("clientName").value.trim(),phone:$("clientPhone").value.trim()||null,whatsapp:$("clientWhatsapp").value.trim()||null,email:$("clientEmail").value.trim()||null,cpf_cnpj:$("clientCpf").value.trim()||null,city:$("clientCity").value.trim()||null,address:$("clientAddress").value.trim()||null,notes:$("clientNotes").value.trim()||null,updated_at:new Date().toISOString()};
+      try{let result=id?await supabaseClient.from("clients").update(payload).eq("id",id).eq("user_id",currentUser.id):await supabaseClient.from("clients").insert({...payload,user_id:currentUser.id});if(result.error)throw result.error;$("clientFormPanel").classList.add("hidden");$("clientForm").reset();message($("clientsFeedback"),id?"Cliente atualizado.":"Cliente cadastrado.","success");await loadClients();}
+      catch(err){console.error(err);message($("clientsFeedback"),"Não foi possível salvar o cliente: "+(err.message||"erro"),"error");}
+    });
+
+    // Pedidos: uma linha de produto/serviço por pedido nesta versão.
+    function fillOrderProductPrice(){const p=productsCache.find(x=>x.id===$("orderProduct").value);if(p){$("orderUnitPrice").value=Number(p.sale_price||0).toFixed(2);}updateOrderPreview();}
+    function updateOrderPreview(){const qty=Number($("orderQuantity")?.value||0),unit=Number($("orderUnitPrice")?.value||0),discount=Number($("orderDiscount")?.value||0),total=Math.max(0,qty*unit-discount),paid=Number($("orderAmountPaid")?.value||0);if($("orderTotalsPreview"))$("orderTotalsPreview").textContent=`Total do pedido: ${fmtMoney(total)} • Saldo a receber: ${fmtMoney(Math.max(0,total-paid))}`;}
+    function populateOrderProducts(){const el=$("orderProduct");if(!el)return;const prev=el.value;el.innerHTML='<option value="">Selecione um produto salvo</option>'+productsCache.map(p=>`<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)} — ${fmtMoney(p.sale_price)}</option>`).join("");if(prev)el.value=prev;}
+    async function loadOrders(){if(!currentUser)return;$("ordersStatus").textContent="Carregando pedidos...";try{const {data,error}=await supabaseClient.from("sales_orders").select("id,order_number,client_id,status,order_date,delivery_date,subtotal,discount,total,amount_paid,amount_due,notes,stock_deducted,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(300);if(error)throw error;ordersCache=data||[];renderOrders();populateOrderProducts();$("ordersStatus").textContent=ordersCache.length+" pedido(s).";}catch(err){console.error(err);$("ordersStatus").textContent="Não foi possível carregar pedidos: "+(err.message||"erro");message($("ordersFeedback"),"Verifique as permissões da tabela sales_orders: "+(err.message||"erro"),"error");}}
+    function renderOrders(){const body=$("ordersTableBody");if(!body)return;const q=($("orderSearch")?.value||"").trim().toLowerCase();const list=ordersCache.filter(o=>[o.order_number,clientNameById(o.client_id),orderStatusLabel(o.status),o.notes].some(v=>String(v||"").toLowerCase().includes(q)));if(!list.length){body.innerHTML='<tr><td colspan="7" class="empty">Nenhum pedido encontrado.</td></tr>';return;}body.innerHTML=list.map(o=>`<tr><td><strong>#${escapeHtml(o.order_number||"—")}</strong><span class="sub">${fmtDate(o.order_date)}</span></td><td>${escapeHtml(clientNameById(o.client_id))}<span class="sub">${escapeHtml(o.notes||"")}</span></td><td>${fmtDate(o.delivery_date)}</td><td>${fmtMoney(o.total)}</td><td>${fmtMoney(o.amount_paid)}<span class="sub">Saldo: ${fmtMoney(o.amount_due)}</span></td><td><select data-order-status="${escapeHtml(o.id)}" aria-label="Status do pedido">${["budget","awaiting_payment","confirmed","production","ready","delivered","cancelled"].map(s=>`<option value="${s}" ${o.status===s?"selected":""}>${orderStatusLabel(s)}</option>`).join("")}</select></td><td><button class="btn btn-outline" data-order-payment="${escapeHtml(o.id)}" type="button" ${Number(o.amount_due)<=0||o.status==="cancelled"?"disabled":""}>Registrar recebimento</button></td></tr>`).join("");body.querySelectorAll("[data-order-status]").forEach(sel=>sel.addEventListener("change",()=>updateOrderStatus(sel.dataset.orderStatus,sel.value)));body.querySelectorAll("[data-order-payment]").forEach(b=>b.addEventListener("click",()=>recordOrderPayment(b.dataset.orderPayment)));}
+    async function syncOpenOrderReceivable(orderId, amountDue, clientId){const {data,error}=await supabaseClient.from("financial_entries").select("id").eq("order_id",orderId).eq("entry_type","income").eq("status","open").limit(1);if(error)throw error;const row=data?.[0];if(amountDue>0){if(row){const r=await supabaseClient.from("financial_entries").update({amount:amountDue,client_id:clientId||null,description:"Saldo a receber do pedido"}).eq("id",row.id);if(r.error)throw r.error;}else{const r=await supabaseClient.from("financial_entries").insert({user_id:currentUser.id,order_id:orderId,client_id:clientId||null,entry_type:"income",status:"open",description:"Saldo a receber do pedido",category:"Pedido",amount:amountDue});if(r.error)throw r.error;}}else if(row){const r=await supabaseClient.from("financial_entries").update({status:"cancelled"}).eq("id",row.id);if(r.error)throw r.error;}}
+    async function updateOrderStatus(id,status){const o=ordersCache.find(x=>x.id===id);if(!o)return;try{if(status==="production"&&!o.stock_deducted){await loadMaterials();const stockResult=await deductOrderMaterials(o);if(!stockResult.ok){message($("ordersFeedback"),stockResult.message,"error");await loadOrders();return;}}const patch={status,updated_at:new Date().toISOString()};if(status==="production"&&!o.stock_deducted)patch.stock_deducted=true;const {error}=await supabaseClient.from("sales_orders").update(patch).eq("id",id).eq("user_id",currentUser.id);if(error)throw error;message($("ordersFeedback"),"Status do pedido atualizado.","success");await loadOrders();await loadMaterials();await loadDashboard();}catch(err){console.error(err);message($("ordersFeedback"),"Não foi possível atualizar o pedido: "+(err.message||"erro"),"error");await loadOrders();}}
+    async function deductOrderMaterials(order){
+      const {data:items,error:itemError}=await supabaseClient.from("order_items").select("product_id,quantity").eq("order_id",order.id);if(itemError)throw itemError;
+      const requirements=new Map();for(const item of (items||[])){if(!item.product_id)continue;const {data:pm,error}=await supabaseClient.from("product_materials").select("material_id,quantity").eq("product_id",item.product_id);if(error)throw error;for(const line of (pm||[]))requirements.set(line.material_id,(requirements.get(line.material_id)||0)+Number(line.quantity||0)*Number(item.quantity||0));}
+      const moves=[];for(const [materialId,qty] of requirements){const mat=materialsCache.find(m=>m.id===materialId);if(!mat)throw new Error("Um material da ficha técnica não foi encontrado. Atualize Materiais e insumos.");if(Number(mat.stock_quantity)<qty)return {ok:false,message:`Estoque insuficiente de ${mat.name}. Disponível: ${fmtQty(mat.stock_quantity)} ${unitLabel(mat.base_unit||mat.unit)}; necessário: ${fmtQty(qty)}.`};moves.push({mat,qty});}
+      for(const {mat,qty} of moves){const {error}=await supabaseClient.from("materials").update({stock_quantity:Number(mat.stock_quantity)-qty,updated_at:new Date().toISOString()}).eq("id",mat.id);if(error)throw error;const movement=await supabaseClient.from("inventory_movements").insert({user_id:currentUser.id,material_id:mat.id,movement_type:"consumption",quantity_change:-qty,notes:`Baixa automática do pedido ${order.order_number||order.id}`});if(movement.error)throw movement.error;}
+      return {ok:true};
+    }
+    async function recordOrderPayment(id){const o=ordersCache.find(x=>x.id===id);if(!o)return;const raw=prompt(`Saldo atual: ${fmtMoney(o.amount_due)}\nQuanto recebeu agora?`);if(raw===null)return;const amount=Number(raw.replace(",","."));if(!Number.isFinite(amount)||amount<=0||amount>Number(o.amount_due)+0.001){alert("Informe um valor maior que zero e que não ultrapasse o saldo.");return;}const methodRaw=prompt("Forma de pagamento: pix, cash, debit, credit, bank_transfer, boleto ou other","pix");if(methodRaw===null)return;const allowed=["pix","cash","debit","credit","bank_transfer","boleto","other"];const method=allowed.includes(methodRaw.trim())?methodRaw.trim():"other";try{const paid=Number(o.amount_paid||0)+amount,due=Math.max(0,Number(o.total||0)-paid);const up=await supabaseClient.from("sales_orders").update({amount_paid:paid,amount_due:due,updated_at:new Date().toISOString()}).eq("id",id);if(up.error)throw up.error;const ins=await supabaseClient.from("financial_entries").insert({user_id:currentUser.id,client_id:o.client_id||null,order_id:id,entry_type:"income",status:"paid",description:`Recebimento do pedido #${o.order_number}`,category:"Pedido",amount,paid_date:todayLocal(),payment_method:method});if(ins.error)throw ins.error;await syncOpenOrderReceivable(id,due,o.client_id);message($("ordersFeedback"),"Recebimento registrado.","success");await loadOrders();await loadFinance();await loadDashboard();}catch(err){console.error(err);message($("ordersFeedback"),"O pagamento pode ter sido parcialmente gravado. Confira o financeiro antes de repetir: "+(err.message||"erro"),"error");}}
+    $("newOrderButton").addEventListener("click",async()=>{await Promise.all([loadClients(),loadProducts()]);$("orderForm").reset();$("orderQuantity").value="1";$("orderDiscount").value="0";$("orderAmountPaid").value="0";$("orderDeliveryDate").value="";$("orderDueDate").value=todayLocal();populateOrderProducts();populateClientSelects();$("orderFormPanel").classList.remove("hidden");updateOrderPreview();$("orderFormPanel").scrollIntoView({behavior:"smooth",block:"start"});});
+    $("cancelOrderButton").addEventListener("click",()=>$ ("orderFormPanel").classList.add("hidden"));
+    $("refreshOrdersButton").addEventListener("click",loadOrders);$("orderSearch").addEventListener("input",renderOrders);$("orderProduct").addEventListener("change",fillOrderProductPrice);["orderQuantity","orderUnitPrice","orderDiscount","orderAmountPaid"].forEach(id=>$(id).addEventListener("input",updateOrderPreview));
+    $("orderForm").addEventListener("submit",async e=>{e.preventDefault();clearMsg($("ordersFeedback"));const p=productsCache.find(x=>x.id===$("orderProduct").value);if(!p){message($("ordersFeedback"),"Selecione um produto salvo na aba Produtos/Precificação.","error");return;}const qty=Number($("orderQuantity").value),unit=Number($("orderUnitPrice").value),discount=Number($("orderDiscount").value||0),total=Math.max(0,qty*unit-discount),paid=Number($("orderAmountPaid").value||0);if(qty<=0||unit<0||discount<0||paid<0||paid>total){message($("ordersFeedback"),"Confira quantidade, preço, desconto e entrada. A entrada não pode exceder o total.","error");return;}const btn=$("saveOrderButton");btn.disabled=true;btn.textContent="Salvando pedido...";let orderId=null;try{const clientId=$("orderClient").value||null;const payload={user_id:currentUser.id,client_id:clientId,status:$("orderStatus").value,order_date:new Date().toISOString(),delivery_date:$("orderDeliveryDate").value||null,subtotal:qty*unit,discount,total,amount_paid:paid,amount_due:Math.max(0,total-paid),notes:$("orderNotes").value.trim()||null,updated_at:new Date().toISOString()};const {data:order,error}=await supabaseClient.from("sales_orders").insert(payload).select("id,order_number").single();if(error)throw error;orderId=order.id;const item=await supabaseClient.from("order_items").insert({user_id:currentUser.id,order_id:order.id,product_id:p.id,description:p.name,quantity:qty,unit_price:unit,unit_cost:Number(p.cost||0),total:qty*unit});if(item.error)throw item.error;if(paid>0){const fi=await supabaseClient.from("financial_entries").insert({user_id:currentUser.id,client_id:clientId,order_id:order.id,entry_type:"income",status:"paid",description:`Entrada do pedido #${order.order_number}`,category:"Pedido",amount:paid,paid_date:todayLocal(),payment_method:$("orderPaymentMethod").value});if(fi.error)throw fi.error;}if(total-paid>0){const fe=await supabaseClient.from("financial_entries").insert({user_id:currentUser.id,client_id:clientId,order_id:order.id,entry_type:"income",status:"open",description:`Saldo do pedido #${order.order_number}`,category:"Pedido",amount:total-paid,due_date:$("orderDueDate").value||null});if(fe.error)throw fe.error;}$("orderFormPanel").classList.add("hidden");message($("ordersFeedback"),`Pedido #${order.order_number} salvo. ${paid>0?"A entrada foi registrada no financeiro. ":""}${total-paid>0?"O saldo ficou em aberto.":"Pedido totalmente pago."}`,"success");await Promise.all([loadOrders(),loadFinance(),loadDashboard()]);}catch(err){console.error(err);message($("ordersFeedback"),"Não foi possível completar o pedido: "+(err.message||"erro")+(orderId?". O pedido pode ter sido criado parcialmente; confira a lista antes de repetir.":""),"error");}finally{btn.disabled=false;btn.textContent="Salvar pedido";}});
+
+    // Agendamentos de fotografia/filmagem
+    async function loadServices(){if(!currentUser)return;$("servicesStatus").textContent="Carregando agenda...";try{const {data,error}=await supabaseClient.from("service_bookings").select("id,client_id,service_type,description,scheduled_date,start_time,duration_minutes,contracted_value,amount_received,amount_due,status,notes,created_at").eq("user_id",currentUser.id).order("scheduled_date",{ascending:true}).limit(500);if(error)throw error;servicesCache=data||[];renderServices();$("servicesStatus").textContent=servicesCache.length+" agendamento(s).";}catch(err){console.error(err);$("servicesStatus").textContent="Não foi possível carregar a agenda: "+(err.message||"erro");message($("servicesFeedback"),"Verifique as permissões da tabela service_bookings: "+(err.message||"erro"),"error");}}
+    function renderServices(){const body=$("servicesTableBody");if(!body)return;const q=($("serviceSearch")?.value||"").trim().toLowerCase();const list=servicesCache.filter(s=>[s.service_type,s.description,clientNameById(s.client_id),s.scheduled_date,s.status].some(v=>String(v||"").toLowerCase().includes(q)));if(!list.length){body.innerHTML='<tr><td colspan="7" class="empty">Nenhum serviço agendado.</td></tr>';return;}body.innerHTML=list.map(s=>`<tr><td><strong>${fmtDate(s.scheduled_date)}</strong><span class="sub">${escapeHtml(String(s.start_time||"").slice(0,5))}</span></td><td><strong>${escapeHtml(s.service_type)}</strong><span class="sub">${escapeHtml(clientNameById(s.client_id))}${s.notes?" • "+escapeHtml(s.notes):""}</span></td><td>${fmtQty(Number(s.duration_minutes||0)/60)} h</td><td>${fmtMoney(s.contracted_value)}</td><td>${fmtMoney(s.amount_received)}<span class="sub">Saldo: ${fmtMoney(s.amount_due)}</span></td><td><select data-service-status="${escapeHtml(s.id)}">${["scheduled","completed","cancelled","no_show"].map(st=>`<option value="${st}" ${s.status===st?"selected":""}>${bookingStatusLabel(st)}</option>`).join("")}</select></td><td><button class="btn btn-outline" type="button" data-service-payment="${escapeHtml(s.id)}" ${Number(s.amount_due)<=0||s.status==="cancelled"?"disabled":""}>Registrar recebimento</button></td></tr>`).join("");body.querySelectorAll("[data-service-status]").forEach(sel=>sel.addEventListener("change",()=>updateServiceStatus(sel.dataset.serviceStatus,sel.value)));body.querySelectorAll("[data-service-payment]").forEach(b=>b.addEventListener("click",()=>recordServicePayment(b.dataset.servicePayment)));}
+    $("newServiceButton").addEventListener("click",async()=>{await loadClients();$("serviceForm").reset();$("serviceDate").value=todayLocal();$("serviceStartTime").value="09:00";$("serviceDuration").value="60";$("serviceValue").value="0";$("serviceReceived").value="0";populateClientSelects();$("serviceFormPanel").classList.remove("hidden");$("serviceFormPanel").scrollIntoView({behavior:"smooth",block:"start"});});
+    $("cancelServiceButton").addEventListener("click",()=>$ ("serviceFormPanel").classList.add("hidden"));$("refreshServicesButton").addEventListener("click",loadServices);$("serviceSearch").addEventListener("input",renderServices);
+    $("serviceForm").addEventListener("submit",async e=>{e.preventDefault();clearMsg($("servicesFeedback"));const value=Number($("serviceValue").value||0),received=Number($("serviceReceived").value||0);if(value<0||received<0||received>value){message($("servicesFeedback"),"Confira o valor contratado e o recebido. O recebido não pode exceder o contratado.","error");return;}const btn=$("saveServiceButton");btn.disabled=true;btn.textContent="Salvando...";let bookingId=null;try{const clientId=$("serviceClient").value||null;const payload={user_id:currentUser.id,client_id:clientId,service_type:$("serviceType").value,description:$("serviceType").value,scheduled_date:$("serviceDate").value,start_time:$("serviceStartTime").value,duration_minutes:Number($("serviceDuration").value),contracted_value:value,amount_received:received,amount_due:Math.max(0,value-received),status:$("serviceStatus").value,notes:$("serviceNotes").value.trim()||null,updated_at:new Date().toISOString()};const {data,error}=await supabaseClient.from("service_bookings").insert(payload).select("id").single();if(error)throw error;bookingId=data.id;if(received>0){const r=await supabaseClient.from("financial_entries").insert({user_id:currentUser.id,client_id:clientId,service_booking_id:bookingId,entry_type:"income",status:"paid",description:`Sinal/recebimento — ${payload.service_type}`,category:"Serviço",amount:received,paid_date:todayLocal(),payment_method:"other"});if(r.error)throw r.error;}if(value-received>0){const r=await supabaseClient.from("financial_entries").insert({user_id:currentUser.id,client_id:clientId,service_booking_id:bookingId,entry_type:"income",status:"open",description:`Saldo a receber — ${payload.service_type}`,category:"Serviço",amount:value-received,due_date:payload.scheduled_date});if(r.error)throw r.error;}$("serviceFormPanel").classList.add("hidden");message($("servicesFeedback"),"Agendamento salvo e valores enviados ao financeiro.","success");await Promise.all([loadServices(),loadFinance(),loadDashboard()]);}catch(err){console.error(err);message($("servicesFeedback"),"Não foi possível concluir o agendamento: "+(err.message||"erro")+(bookingId?". O agendamento pode ter sido criado parcialmente; confira antes de repetir.":""),"error");}finally{btn.disabled=false;btn.textContent="Salvar agendamento";}});
+    async function updateServiceStatus(id,status){try{const {error}=await supabaseClient.from("service_bookings").update({status,updated_at:new Date().toISOString()}).eq("id",id).eq("user_id",currentUser.id);if(error)throw error;message($("servicesFeedback"),"Status do agendamento atualizado.","success");await loadServices();}catch(err){message($("servicesFeedback"),"Não foi possível atualizar: "+(err.message||"erro"),"error");await loadServices();}}
+    async function syncOpenServiceReceivable(id,due,clientId){const {data,error}=await supabaseClient.from("financial_entries").select("id").eq("service_booking_id",id).eq("entry_type","income").eq("status","open").limit(1);if(error)throw error;const row=data?.[0];if(due>0){if(row){const r=await supabaseClient.from("financial_entries").update({amount:due,client_id:clientId||null}).eq("id",row.id);if(r.error)throw r.error;}else{const r=await supabaseClient.from("financial_entries").insert({user_id:currentUser.id,client_id:clientId||null,service_booking_id:id,entry_type:"income",status:"open",description:"Saldo de serviço a receber",category:"Serviço",amount:due});if(r.error)throw r.error;}}else if(row){const r=await supabaseClient.from("financial_entries").update({status:"cancelled"}).eq("id",row.id);if(r.error)throw r.error;}}
+    async function recordServicePayment(id){const s=servicesCache.find(x=>x.id===id);if(!s)return;const raw=prompt(`Saldo atual: ${fmtMoney(s.amount_due)}\nQuanto recebeu agora?`);if(raw===null)return;const amount=Number(raw.replace(",","."));if(!Number.isFinite(amount)||amount<=0||amount>Number(s.amount_due)+0.001){alert("Informe um valor maior que zero e que não ultrapasse o saldo.");return;}try{const received=Number(s.amount_received||0)+amount,due=Math.max(0,Number(s.contracted_value||0)-received);const up=await supabaseClient.from("service_bookings").update({amount_received:received,amount_due:due,updated_at:new Date().toISOString()}).eq("id",id);if(up.error)throw up.error;const fi=await supabaseClient.from("financial_entries").insert({user_id:currentUser.id,client_id:s.client_id||null,service_booking_id:id,entry_type:"income",status:"paid",description:`Recebimento — ${s.service_type}`,category:"Serviço",amount,paid_date:todayLocal(),payment_method:"other"});if(fi.error)throw fi.error;await syncOpenServiceReceivable(id,due,s.client_id);message($("servicesFeedback"),"Recebimento registrado.","success");await Promise.all([loadServices(),loadFinance(),loadDashboard()]);}catch(err){console.error(err);message($("servicesFeedback"),"O recebimento pode ter sido parcialmente registrado. Confira o financeiro antes de repetir: "+(err.message||"erro"),"error");}}
+
+    // Financeiro geral
+    async function loadFinance(){if(!currentUser)return;$("financeStatusLine").textContent="Carregando lançamentos...";try{const {data,error}=await supabaseClient.from("financial_entries").select("id,entry_type,status,description,category,amount,due_date,paid_date,payment_method,created_at,order_id,service_booking_id").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(1000);if(error)throw error;financialCache=data||[];renderFinance();$("financeStatusLine").textContent=financialCache.length+" lançamento(s).";}catch(err){console.error(err);$("financeStatusLine").textContent="Não foi possível carregar o financeiro: "+(err.message||"erro");message($("financeFeedback"),"Verifique as permissões da tabela financial_entries: "+(err.message||"erro"),"error");}}
+    function renderFinance(){const body=$("financeTableBody");if(!body)return;const list=financialCache;if(!list.length){body.innerHTML='<tr><td colspan="7" class="empty">Nenhum lançamento cadastrado.</td></tr>';return;}body.innerHTML=list.map(f=>`<tr><td>${fmtDate(f.paid_date||f.due_date||f.created_at)}</td><td><strong>${entryTypeLabel(f.entry_type)}</strong><span class="sub">${escapeHtml(f.description)}</span></td><td>${escapeHtml(f.category||"—")}</td><td>${fmtMoney(f.amount)}</td><td>${entryStatusLabel(f.status)}</td><td>${paymentLabel(f.payment_method)}</td><td>${f.status==="open"?`<button class="btn btn-outline" type="button" data-finance-paid="${escapeHtml(f.id)}">Marcar pago</button>`:"—"}${f.status!=="cancelled"?` <button class="btn btn-danger" type="button" data-finance-cancel="${escapeHtml(f.id)}">Cancelar</button>`:""}</td></tr>`).join("");body.querySelectorAll("[data-finance-paid]").forEach(b=>b.addEventListener("click",()=>markFinancePaid(b.dataset.financePaid)));body.querySelectorAll("[data-finance-cancel]").forEach(b=>b.addEventListener("click",()=>cancelFinanceEntry(b.dataset.financeCancel)));}
+    $("financeDueDate").value=todayLocal();$("financePaidDate").value=todayLocal();$("refreshFinanceButton").addEventListener("click",loadFinance);
+    $("financeForm").addEventListener("submit",async e=>{e.preventDefault();clearMsg($("financeFeedback"));const amount=Number($("financeAmount").value);if(!Number.isFinite(amount)||amount<=0){message($("financeFeedback"),"Informe um valor positivo.","error");return;}const status=$("financeStatus").value;const payload={user_id:currentUser.id,entry_type:$("financeType").value,status,description:$("financeDescription").value.trim(),category:$("financeCategory").value.trim()||null,amount,due_date:$("financeDueDate").value||null,paid_date:status==="paid"?($("financePaidDate").value||todayLocal()):null,payment_method:$("financePaymentMethod").value,notes:$("financeNotes").value.trim()||null};try{const {error}=await supabaseClient.from("financial_entries").insert(payload);if(error)throw error;$("financeForm").reset();$("financeDueDate").value=todayLocal();$("financePaidDate").value=todayLocal();message($("financeFeedback"),"Lançamento salvo.","success");await Promise.all([loadFinance(),loadDashboard()]);}catch(err){console.error(err);message($("financeFeedback"),"Não foi possível salvar o lançamento: "+(err.message||"erro"),"error");}});
+    async function markFinancePaid(id){const f=financialCache.find(x=>x.id===id);if(!f)return;if(!confirm(`Marcar “${f.description}” (${fmtMoney(f.amount)}) como pago/recebido?`))return;try{const {error}=await supabaseClient.from("financial_entries").update({status:"paid",paid_date:todayLocal(),updated_at:new Date().toISOString()}).eq("id",id).eq("user_id",currentUser.id);if(error)throw error;message($("financeFeedback"),"Lançamento atualizado como pago/recebido.","success");await Promise.all([loadFinance(),loadDashboard(),loadReports()]);}catch(err){message($("financeFeedback"),"Não foi possível atualizar: "+(err.message||"erro"),"error");}}
+    async function cancelFinanceEntry(id){const f=financialCache.find(x=>x.id===id);if(!f||!confirm(`Cancelar o lançamento “${f.description}”?`))return;try{const {error}=await supabaseClient.from("financial_entries").update({status:"cancelled",updated_at:new Date().toISOString()}).eq("id",id).eq("user_id",currentUser.id);if(error)throw error;message($("financeFeedback"),"Lançamento cancelado. Histórico preservado.","success");await Promise.all([loadFinance(),loadDashboard(),loadReports()]);}catch(err){message($("financeFeedback"),"Não foi possível cancelar: "+(err.message||"erro"),"error");}}
+
+    // Dashboard e relatórios usam as receitas/despesas financeiras efetivamente registradas.
+    async function getFinancialRows(){const {data,error}=await supabaseClient.from("financial_entries").select("entry_type,status,amount,paid_date,due_date,created_at").eq("user_id",currentUser.id).limit(2000);if(error)throw error;return data||[];}
+    async function loadDashboard(){if(!currentUser)return;try{const [rowsRes,ordersRes]=await Promise.all([getFinancialRows(),supabaseClient.from("sales_orders").select("id,status").eq("user_id",currentUser.id).limit(1000)]);if(ordersRes.error)throw ordersRes.error;const rows=rowsRes;const now=new Date(),month=String(now.getMonth()+1).padStart(2,"0"),year=String(now.getFullYear());const inMonth=r=>String(r.paid_date||r.created_at||"").slice(0,7)===`${year}-${month}`;const income=rows.filter(r=>r.entry_type==="income"&&r.status==="paid"&&inMonth(r)).reduce((a,r)=>a+Number(r.amount||0),0);const expenses=rows.filter(r=>r.entry_type==="expense"&&r.status==="paid"&&inMonth(r)).reduce((a,r)=>a+Number(r.amount||0),0);const open=rows.filter(r=>r.entry_type==="income"&&r.status==="open").reduce((a,r)=>a+Number(r.amount||0),0);const active=(ordersRes.data||[]).filter(o=>!["delivered","cancelled"].includes(o.status)).length;if($("dashboardRevenue"))$("dashboardRevenue").textContent=fmtMoney(income);if($("dashboardProfit"))$("dashboardProfit").textContent=fmtMoney(income-expenses);if($("dashboardOrders"))$("dashboardOrders").textContent=String(active);if($("dashboardReceivable"))$("dashboardReceivable").textContent=fmtMoney(open);}catch(err){console.error("Dashboard:",err);}}
+    async function loadReports(){if(!currentUser)return;try{const rows=await getFinancialRows();const income=rows.filter(r=>r.entry_type==="income"&&r.status==="paid").reduce((a,r)=>a+Number(r.amount||0),0);const expenses=rows.filter(r=>r.entry_type==="expense"&&r.status==="paid").reduce((a,r)=>a+Number(r.amount||0),0);const open=rows.filter(r=>r.entry_type==="income"&&r.status==="open").reduce((a,r)=>a+Number(r.amount||0),0);$("reportIncome").textContent=fmtMoney(income);$("reportExpenses").textContent=fmtMoney(expenses);$("reportNet").textContent=fmtMoney(income-expenses);$("reportOpen").textContent=fmtMoney(open);}catch(err){console.error(err);message($("reportsFeedback"),"Não foi possível carregar os relatórios: "+(err.message||"erro"),"error");}}
+    $("exportFinanceCsvButton").addEventListener("click",async()=>{try{await loadFinance();const rows=financialCache;const cells=[["Data","Tipo","Descrição","Categoria","Valor","Situação","Forma de pagamento"],...rows.map(r=>[r.paid_date||r.due_date||r.created_at,entryTypeLabel(r.entry_type),r.description,r.category||"",Number(r.amount||0).toFixed(2),entryStatusLabel(r.status),paymentLabel(r.payment_method)])];const csv=cells.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(";")).join("\r\n");const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="arte-criativa-financeiro.csv";a.click();URL.revokeObjectURL(url);}catch(err){message($("reportsFeedback"),"Não foi possível exportar: "+(err.message||"erro"),"error");}});
+
+    // A baixa do estoque ocorre uma única vez quando o pedido passa para produção.
+    // Para isso, a coluna stock_deducted é criada pelo arquivo SQL de preparação fornecido junto.
 
     supabaseClient.auth.onAuthStateChange((event,session)=>{
       if(event==="PASSWORD_RECOVERY"){recoveryMode=true;recoveryCompleted=false;showReset();return;}
